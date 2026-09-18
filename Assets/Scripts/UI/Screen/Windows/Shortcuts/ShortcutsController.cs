@@ -11,6 +11,8 @@ public class ShortcutsController : MonoBehaviour
     private Dictionary<string, HoverableButton> shortcuts = new();
 
     private string selectedAppName;
+    private CustomMenuItem settingsShortcut;
+    private bool settingsOpen;
 
     #region 临时
     [SerializeField] private GameObject restButton;
@@ -32,7 +34,8 @@ public class ShortcutsController : MonoBehaviour
         {
             if (layoutTransform.GetChild(i).TryGetComponent<CustomMenuItem>(out var shortcut))
             {
-                if (shortcut.name == "Settings") continue; // Global settings are not a desktop window or tutorial unlock.
+                // Settings shares the travelling frame, but stays outside desktop-window unlocks.
+                if (shortcut.name == "Settings") { settingsShortcut = shortcut; continue; }
                 shortcuts.Add(shortcut.name, shortcut);
                 SetOpened(shortcut, false);
                 shortcut.onClick.AddListener(() =>
@@ -47,6 +50,7 @@ public class ShortcutsController : MonoBehaviour
         selectRect.gameObject.SetActive(false);
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(layoutTransform);
+        if (settingsOpen && settingsShortcut != null) SelectWithTween(settingsShortcut.rectTransform);
 
         #region 新手教程
         var unlockedShortcuts = GameDataManager.Instance.WindowsData.unlockedShortcuts;
@@ -75,32 +79,41 @@ public class ShortcutsController : MonoBehaviour
         // 快捷方式未解锁
         if (!shortcuts[appName].gameObject.activeSelf) return;
 
-        SelectWithTween(appName);
+        if (!settingsOpen) SelectWithTween(appName);
 
         selectedAppName = appName;
     }
 
     private void SelectWithTween(string appName)
     {
-        Vector2 startPos = string.IsNullOrEmpty(selectedAppName) ?
-            selectRect.anchoredPosition :
-            (shortcuts[selectedAppName].transform as RectTransform).anchoredPosition;
+        SelectWithTween(shortcuts[appName].rectTransform);
+    }
 
-        selectRect.anchoredPosition = startPos;
-
-        Vector2 targetPos = (shortcuts[appName].transform as RectTransform).anchoredPosition;
-
-        // 显示选中框
+    private void SelectWithTween(RectTransform target)
+    {
+        LayoutRebuilder.ForceRebuildLayoutImmediate(layoutTransform);
         selectRect.gameObject.SetActive(true);
+        // Keep the existing OutBack motion and retarget from its current position, even while paused.
+        AnimationManager.Instance.PlayAnchorMove(selectRect, target.anchoredPosition, ease: Ease.OutBack).SetUpdate(true);
+    }
 
-        // 播放选中框移动动画
-        AnimationManager.Instance.PlayAnchorMove(selectRect, targetPos, ease: Ease.OutBack);
+    public void SetSettingsOpen(bool value)
+    {
+        if (settingsOpen == value) return;
+        settingsOpen = value;
+        if (value && settingsShortcut != null) SelectWithTween(settingsShortcut.rectTransform);
+        else if (!value)
+        {
+            if (!string.IsNullOrEmpty(selectedAppName) && shortcuts.ContainsKey(selectedAppName)
+                && shortcuts[selectedAppName].gameObject.activeSelf) SelectWithTween(selectedAppName);
+            else { selectRect.DOKill(); selectRect.gameObject.SetActive(false); }
+        }
     }
 
     public void ClearSelection()
     {
         selectedAppName = null;
-        selectRect.gameObject.SetActive(false);
+        if (!settingsOpen) { selectRect.DOKill(); selectRect.gameObject.SetActive(false); }
     }
 
     public void SetOpened(string appName, bool value)
@@ -132,7 +145,9 @@ public class ShortcutsController : MonoBehaviour
         MonoUtility.UpdateHorizontalLayoutSize(layoutTransform.GetComponent<HorizontalLayoutGroup>());
         (transform as RectTransform).sizeDelta = new Vector2(layoutTransform.sizeDelta.x, (transform as RectTransform).sizeDelta.y);
 
-        if (!string.IsNullOrEmpty(selectedAppName))
+        if (settingsOpen && settingsShortcut != null)
+            SelectWithTween(settingsShortcut.rectTransform);
+        else if (!string.IsNullOrEmpty(selectedAppName))
             SelectWithTween(selectedAppName);
 
         if (!value && blink)
@@ -158,4 +173,6 @@ public class ShortcutsController : MonoBehaviour
 
         return list;
     }
+
+    private void OnDisable() { if (selectRect != null) selectRect.DOKill(); }
 }

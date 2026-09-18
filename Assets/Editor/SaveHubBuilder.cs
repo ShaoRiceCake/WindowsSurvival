@@ -61,6 +61,7 @@ public static partial class SaveHubBuilder
         var filters = Rect("Filters", panel); Place(filters, 30, 137, 475, 44);
         var fl = filters.gameObject.AddComponent<HorizontalLayoutGroup>(); fl.spacing = 8; fl.childControlWidth = true; fl.childForceExpandWidth = false; fl.childControlHeight = true; fl.childForceExpandHeight = true;
         filters.gameObject.SetActive(false); hub.filterBar = filters;
+        hub.filterSelection = SelectionFrame(filters);
         var scroll = Scroll("RunList", panel); Place((RectTransform)scroll.transform, 30, 138, 485, 604); hub.listScroll = scroll; hub.listContent = scroll.content;
         var detail = Scroll("Details", panel); Place((RectTransform)detail.transform, 545, 138, 665, 604); hub.detailScroll = detail; hub.detailContent = detail.content;
         var layout = hub.detailContent.gameObject.AddComponent<VerticalLayoutGroup>(); layout.spacing = 12; layout.padding = new RectOffset(12, 12, 8, 16); layout.childControlHeight = true; layout.childForceExpandHeight = false; layout.childControlWidth = true; layout.childForceExpandWidth = true;
@@ -158,6 +159,7 @@ public static partial class SaveHubBuilder
         Stretch(view.scroll.viewport); view.scroll.viewport.offsetMin = new Vector2(4, 0); view.scroll.viewport.offsetMax = new Vector2(-22, 0);
         var bar = (RectTransform)view.scroll.verticalScrollbar.transform; bar.sizeDelta = new Vector2(18, -8); bar.anchoredPosition = Vector2.zero;
         view.scroll.scrollSensitivity = 44;
+        view.selectionFrame = SelectionFrame(view.scroll.content);
         var row = (SaveHubButton)Button("WorldlineRow", templates, "");
         var rowRect = (RectTransform)row.transform;
         rowRect.anchorMin = new Vector2(0, 1); rowRect.anchorMax = Vector2.one; rowRect.pivot = new Vector2(.5f, 1); rowRect.sizeDelta = new Vector2(0, SaveWorldlineView.RowHeight - 12);

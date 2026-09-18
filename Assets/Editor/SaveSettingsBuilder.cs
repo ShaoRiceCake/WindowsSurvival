@@ -29,6 +29,7 @@ public static partial class SaveHubBuilder
         navLayout.spacing=16; navLayout.padding=new RectOffset(2,2,2,2);
         navLayout.childControlWidth=navLayout.childControlHeight=true;navLayout.childForceExpandWidth=true;navLayout.childForceExpandHeight=false;
         view.navigationScroll.content.gameObject.AddComponent<ContentSizeFitter>().verticalFit=ContentSizeFitter.FitMode.PreferredSize;
+        view.categorySelection=SelectionFrame(view.navigationScroll.content,true);
         var templates = Rect("Templates",root);templates.gameObject.SetActive(false);
         view.categoryTemplate=PositionedButton(templates,"Category","游戏",0,0,190,60,26);
         var tabLayout=view.categoryTemplate.gameObject.AddComponent<LayoutElement>();tabLayout.preferredHeight=60;

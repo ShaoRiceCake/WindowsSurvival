@@ -1,0 +1,56 @@
+PASS settings animation tested while gameplay is paused
+PASS initial settings frame arrives at target border
+PASS initial settings only one selected border
+PASS initial settings frame does not block input or affect layout
+PASS settings selection starts at old visible frame
+PASS settings selection moves with unscaled time
+PASS rapid second selection does not snap backward
+PASS rapid settings frame arrives at target border
+PASS rapid settings only one selected border
+PASS rapid settings frame does not block input or affect layout
+PASS settings selected frame visible in rendered pixels
+PASS settings renders intermediate moving-frame positions
+PASS recorded settings frame arrives at target border
+PASS recorded settings only one selected border
+PASS recorded settings frame does not block input or affect layout
+PASS journal selected frame visible in rendered pixels
+PASS journal renders intermediate moving-frame positions
+PASS journal automatic frame arrives at target border
+PASS journal automatic only one selected border
+PASS journal automatic frame does not block input or affect layout
+PASS filter actually changes displayed save records
+PASS filter buttons are reused across changes
+PASS rapid filter retarget starts without a jump
+PASS journal rapid retarget frame arrives at target border
+PASS journal rapid retarget only one selected border
+PASS journal rapid retarget frame does not block input or affect layout
+PASS initial worldline frame arrives at target border
+PASS initial worldline only one selected border
+PASS initial worldline frame does not block input or affect layout
+PASS worldlines selected frame visible in rendered pixels
+PASS worldlines renders intermediate moving-frame positions
+PASS worldline second row frame arrives at target border
+PASS worldline second row only one selected border
+PASS worldline second row frame does not block input or affect layout
+PASS scrolling recycled rows does not move selection to a different worldline
+PASS selection uses the existing viewport stencil mask
+PASS selection after scrolling frame arrives at target border
+PASS selection after scrolling only one selected border
+PASS selection after scrolling frame does not block input or affect layout
+PASS rapid worldline retarget does not jump
+PASS worldline rapid retarget frame arrives at target border
+PASS worldline rapid retarget only one selected border
+PASS worldline rapid retarget frame does not block input or affect layout
+PASS history reopened from worldline frame arrives at target border
+PASS history reopened from worldline only one selected border
+PASS history reopened from worldline frame does not block input or affect layout
+PASS bottom-settings selected frame visible in rendered pixels
+PASS bottom-settings renders intermediate moving-frame positions
+PASS bottom settings opens real settings game page
+PASS bottom frame reaches settings while paused
+PASS in-game settings initial frame arrives at target border
+PASS in-game settings initial only one selected border
+PASS in-game settings initial frame does not block input or affect layout
+PASS closing settings restores previous desktop selection
+PASS settings stays outside tutorial unlock and saved desktop windows
+PASS quick open-close does not leave a stale bottom selection

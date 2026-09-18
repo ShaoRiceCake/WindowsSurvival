@@ -1,0 +1,7 @@
+PASS Unity Editor Play Mode: real main-menu Button pointer events and raycast targets, open/close, settings, create via UI, manual save, UI rewind, exit save, death, return to menu and reopen.
+PASS worldline-only list, summary record count, two-step load into selected worldline, filtered history return retains selection.
+PASS rename with 30-character name and blank rejection, independent copy, cancel/confirm deletion, 22 worlds and pooled scroll selection.
+PASS hardcore worldline opens single record with retain/delete disabled.
+PASS no legacy save UI objects (including inactive).
+PASS no Unity Error/Exception/Assert.
+PASS authored scene and prefab used without test-time rebuild.

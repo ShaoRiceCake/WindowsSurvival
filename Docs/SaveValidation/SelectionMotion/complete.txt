@@ -1,0 +1,1 @@
+PASS Unity Editor Play Mode: all four authored selection flows, paused animations, fast retarget, 22-worldline scrolling and modal return.

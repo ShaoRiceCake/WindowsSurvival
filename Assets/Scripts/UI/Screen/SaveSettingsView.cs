@@ -12,6 +12,7 @@ public sealed class SaveSettingsView : MonoBehaviour
     public Vector2 windowSize = new Vector2(1290, 720);
     public ScrollRect navigationScroll, optionsScroll;
     public SaveHubButton categoryTemplate;
+    public SelectionFrameMotion categorySelection;
     public SaveSettingRow rowTemplate;
     public GameObject gamePage, optionsPage, gameActions;
     public Text worldName, place, gameTime, recent, categoryHeading;
@@ -40,10 +41,14 @@ public sealed class SaveSettingsView : MonoBehaviour
             var button = categories[i]; string category = source[i];
             button.gameObject.SetActive(true); button.name = "Category-" + category;
             button.text.text = category; button.selected = category == selected;
-            button.transform.Find("SelectionMark").gameObject.SetActive(button.selected);
+            button.useSharedSelectionFrame = true;
+            button.transform.Find("SelectionMark").gameObject.SetActive(false);
             Wire(button, () => choose(category));
         }
         for (int i = source.Length; i < categories.Count; i++) categories[i].gameObject.SetActive(false);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(navigationScroll.content);
+        var chosen = categories.FirstOrDefault(b => b.gameObject.activeSelf && b.selected);
+        categorySelection.Select(chosen != null ? chosen.frame.rectTransform : null);
     }
 
     public void ShowGame(RunData run, bool safe, Action saveAction, Action loadAction,

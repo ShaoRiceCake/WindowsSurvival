@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public sealed class SaveWorldlineView : MonoBehaviour
 {
     public ScrollRect scroll;
+    public SelectionFrameMotion selectionFrame;
     public SaveHubButton rowTemplate, create, import, load, manage, rename, copy, share, delete, emptyCreate;
     public Text count, mode, worldName, place, time, played, records, recent, hardRule;
     public Image placeIcon;
@@ -84,14 +85,19 @@ public sealed class SaveWorldlineView : MonoBehaviour
             var rect = (RectTransform)row.transform;
             rect.anchoredPosition = new Vector2(0, -index * RowHeight); rect.sizeDelta = new Vector2(0, RowHeight - 12);
             row.text.text = run.name; row.selected = Selected?.id == run.id;
+            row.useSharedSelectionFrame = true;
             row.transform.Find("Summary").GetComponent<Text>().text =
                 (run.hardcore ? "硬核" : "普通") + " · " + (point?.TimeLabel ?? "尚未开始");
             row.onClick.RemoveAllListeners(); row.onClick.AddListener(() => Select(run, true));
+            if (row.selected) selectionFrame.Select(row.frame.rectTransform);
         }
+        if (Selected == null) selectionFrame.Clear();
     }
 
     private void Select(RunData run, bool animate)
     {
+        if (animate && Selected?.id == run?.id) return;
+        if (!animate) selectionFrame.Clear();
         CloseMenu(); Selected = run; selected?.Invoke(run);
         details.SetActive(run != null); empty.SetActive(run == null);
         manage.gameObject.SetActive(run != null); load.gameObject.SetActive(run != null);

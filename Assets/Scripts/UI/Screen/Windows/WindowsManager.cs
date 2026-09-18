@@ -360,6 +360,11 @@ public class WindowsManager : MonoBehaviour
     }
 
     public WindowBase GetCurrentFocusedWindow() => currentFocusedWindow;
+    public void SetSettingsOpen(bool value)
+    {
+        if (shortcutsController != null && shortcutsController.isActiveAndEnabled)
+            shortcutsController.SetSettingsOpen(value);
+    }
 
     public bool IsWindowOpen(string appName)
     {

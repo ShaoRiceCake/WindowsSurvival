@@ -13,6 +13,7 @@ public sealed class SaveHubUI : MonoBehaviour
     public Text title, subtitle, status;
     public HoverableButton closeButton;
     public RectTransform listContent, detailContent, filterBar;
+    public SelectionFrameMotion filterSelection;
     public ScrollRect listScroll, detailScroll;
     public RectTransform window;
     public HoverableButton rowTemplate, actionTemplate;
@@ -28,6 +29,8 @@ public sealed class SaveHubUI : MonoBehaviour
     private Coroutine toastMotion;
     private string selectedWorldline;
     private readonly List<SaveJournalRow> journalRows = new();
+    private readonly List<SaveHubButton> filterButtons = new();
+    private string historyWorldline;
     private Coroutine pageMotion, windowMotion;
     private string lastNotice;
     private float noticeUntil;
@@ -85,7 +88,7 @@ public sealed class SaveHubUI : MonoBehaviour
     }
     private void OnSaveChanged() { lastNotice = SaveSystem.Notice; noticeUntil = Time.unscaledTime + 5; }
     private void OnDestroy() { SaveSystem.Changed -= OnSaveChanged; revertDisplay?.Invoke(); if (Instance == this) Instance = null; }
-    private void OnDisable() => ReleaseCursor();
+    private void OnDisable() { ReleaseCursor(); WindowsManager.Instance?.SetSettingsOpen(false); }
     private void ReleaseCursor()
     {
         if (!ownsSystemCursor) return;
@@ -99,7 +102,7 @@ public sealed class SaveHubUI : MonoBehaviour
         status.text = Time.unscaledTime < noticeUntil ? lastNotice ?? "" : "";
         if (listScroll.gameObject.activeSelf) RenderList();
     }
-    private void Open(string heading, string sub)
+    private void Open(string heading, string sub, bool preserveFilters = false)
     {
         worldlines.gameObject.SetActive(false);
         settingsView.gameObject.SetActive(false);
@@ -111,11 +114,12 @@ public sealed class SaveHubUI : MonoBehaviour
         escapeAction = null;
         if (!IsOpen) { previousScale = Time.timeScale; Time.timeScale = 0; }
         panel.SetActive(true); SaveRuntime.Instance.PausedByUI = true;
+        WindowsManager.Instance?.SetSettingsOpen(true);
         if (!ownsSystemCursor) { ownsSystemCursor = true; MouseManager.SetSystemCursorForUI(true); }
         foreach (var caption in window.Find("TopBar").GetComponentsInChildren<Text>(true))
             if (caption.name == "Name") caption.text = heading;
         subtitle.text = sub; closeButton.gameObject.SetActive(!death);
-        filterBar.gameObject.SetActive(false);
+        if (!preserveFilters) filterBar.gameObject.SetActive(false);
         Layout(1240, 860, 380);
         var group = GetCanvasGroup(window); group.alpha = 1;
         if (opening) windowMotion = StartCoroutine(WindowFade(true));
@@ -150,7 +154,7 @@ public sealed class SaveHubUI : MonoBehaviour
         float start = group.alpha, elapsed = 0, duration = opening ? .18f : .12f;
         if (opening) start = 0;
         while (elapsed < duration) { elapsed += Time.unscaledDeltaTime; group.alpha = Mathf.Lerp(start, opening ? 1 : 0, elapsed / duration); yield return null; }
-        if (!opening) { panel.SetActive(false); ReleaseCursor(); Time.timeScale = previousScale; SaveRuntime.Instance.PausedByUI = false; }
+        if (!opening) { panel.SetActive(false); ReleaseCursor(); Time.timeScale = previousScale; SaveRuntime.Instance.PausedByUI = false; WindowsManager.Instance?.SetSettingsOpen(false); }
         windowMotion = null;
     }
     private IEnumerator PageFade()
@@ -231,17 +235,23 @@ public sealed class SaveHubUI : MonoBehaviour
     private void Tabs(IEnumerable<string> names, string current, Action<string> choose)
     {
         filterBar.gameObject.SetActive(true); filterBar.sizeDelta = new Vector2(window.sizeDelta.x - 60, 44);
-        foreach (Transform child in filterBar) { child.gameObject.SetActive(false); Destroy(child.gameObject); }
+        int index = 0;
         foreach (var name in names)
         {
-            var b = Instantiate(actionTemplate, filterBar); b.gameObject.SetActive(true); b.text.text = name;
+            if (index == filterButtons.Count) filterButtons.Add((SaveHubButton)Instantiate(actionTemplate, filterBar));
+            var b = filterButtons[index++]; b.gameObject.SetActive(true); b.text.text = name;
             b.GetComponent<LayoutElement>().preferredWidth = 130;
-            ((SaveHubButton)b).selected = name == current;
-            b.onClick.AddListener(() => Guard(() => { if (!displayPending && !loading) choose(name); }));
+            b.selected = name == current; b.useSharedSelectionFrame = true;
+            b.onClick.RemoveAllListeners();
+            b.onClick.AddListener(() => Guard(() => { if (!displayPending && !loading && name != current) choose(name); }));
         }
+        for (int i = index; i < filterButtons.Count; i++) filterButtons[i].gameObject.SetActive(false);
         float tabsTop = string.IsNullOrEmpty(subtitle.text) ? 100 : 137;
         filterBar.anchoredPosition = new Vector2(30,-tabsTop);
         var right = (RectTransform)detailScroll.transform; right.anchoredPosition = new Vector2(30,-tabsTop-60); right.sizeDelta = new Vector2(window.sizeDelta.x-60,window.sizeDelta.y-tabsTop-166);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(filterBar);
+        var chosen = filterButtons.FirstOrDefault(b => b.gameObject.activeSelf && b.selected);
+        filterSelection.Select(chosen != null ? chosen.frame.rectTransform : null);
     }
     private InputField Input(string value, int limit = 30)
     {
@@ -321,7 +331,9 @@ public sealed class SaveHubUI : MonoBehaviour
     }
     public void ShowHistory(RunData run, SaveKind? filter = null, Action back = null)
     {
-        Open("航行日志", "时间线名称：" + run.name); Layout(1240, 900, 0); SetList(Array.Empty<string>(), null); ClearDetails();
+        bool sameHistory = IsOpen && filterBar.gameObject.activeSelf && historyWorldline == run.id;
+        historyWorldline = run.id;
+        Open("航行日志", "时间线名称：" + run.name, sameHistory); Layout(1240, 900, 0); SetList(Array.Empty<string>(), null); ClearDetails();
         Action returnTo = back ?? (() => { if (death) ShowDeath(); else if (SaveSystem.Ready) ShowGameMenu(); else ShowRuns(); });
         escapeAction = returnTo;
         Tabs(new[] { "全部", "自动", "手动" }, !filter.HasValue ? "全部" : filter == SaveKind.Manual ? "手动" : "自动", name => ShowHistory(run, name == "全部" ? null : name == "手动" ? SaveKind.Manual : SaveKind.Auto, returnTo));

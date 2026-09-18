@@ -17,6 +17,8 @@ public class SoundManager : MonoBehaviour
     private AudioSource heartbeatSource;   // 心跳通道（无音频效果）
     private Dictionary<string, AudioSource> cardLoopSources = new(); // 卡牌循环音效通道
 
+    private readonly Dictionary<string, float> loopGains = new();
+    private float heartbeatGain = 1;
     private Coroutine fadeCoroutine;       // BGM淡入淡出协程
     private float targetVolume;            // BGM目标音量
 
@@ -42,11 +44,14 @@ public class SoundManager : MonoBehaviour
         instance = this;
         InitAudioChannels();
         GameDataManager.Instance.onBGMVolumeChanged.AddListener(OnBGMVolumeChanged);
+        GameSettings.Changed += ApplySettings;
+        ApplySettings();
     }
 
     private void OnDestroy()
     {
         GameDataManager.Instance.onBGMVolumeChanged.RemoveListener(OnBGMVolumeChanged);
+        GameSettings.Changed -= ApplySettings;
     }
 
     /// <summary>
@@ -90,6 +95,15 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// 响应BGM音量变化事件
     /// </summary>
+    private void ApplySettings()
+    {
+        OnBGMVolumeChanged();
+        sfxSource.volume = GetNormalizedSFXVolume();
+        heartbeatSource.volume = heartbeatGain * GetNormalizedSFXVolume();
+        foreach (var pair in cardLoopSources)
+            if (pair.Value != null) pair.Value.volume = (loopGains.TryGetValue(pair.Key, out var gain) ? gain : .3f) * GetNormalizedSFXVolume();
+    }
+
     private void OnBGMVolumeChanged()
     {
         float newVolume = GetNormalizedBGMVolume();
@@ -180,13 +194,15 @@ public class SoundManager : MonoBehaviour
         }
         if (heartbeatSource.isPlaying && heartbeatSource.clip == clip)
         {
-            heartbeatSource.volume = volume;
+            heartbeatGain = volume;
+            heartbeatSource.volume = volume * GetNormalizedSFXVolume();
             heartbeatSource.pitch = pitch;
             return;
         }
         heartbeatSource.Stop();
         heartbeatSource.clip = clip;
-        heartbeatSource.volume = volume;
+        heartbeatGain = volume;
+        heartbeatSource.volume = volume * GetNormalizedSFXVolume();
         heartbeatSource.pitch = pitch;
         heartbeatSource.Play();
     }
@@ -281,7 +297,7 @@ public class SoundManager : MonoBehaviour
     public void PlaySound(string clipName, bool isRandom = false, float volumeMultiplier = 1f)
     {
         var clip = GetClip(clipName, "SFX");
-        float baseVolume = GetNormalizedSFXVolume();
+        float baseVolume = 1f; // SFX channel gain is applied by ApplySettings.
         if (isRandom)
         {
             float volumeVariation = 1f + UnityEngine.Random.Range(-0.1f, 0.1f);
@@ -346,7 +362,8 @@ public class SoundManager : MonoBehaviour
         }
         source.clip = clip;
         source.loop = true;
-        source.volume = initialVolume;
+        loopGains[cardId] = initialVolume;
+        source.volume = initialVolume * GetNormalizedSFXVolume();
         // 独立添加效果组件
         var lp = cardObj.AddComponent<AudioLowPassFilter>();
         lp.cutoffFrequency = _defaultCutoffFrequency;
@@ -368,6 +385,7 @@ public class SoundManager : MonoBehaviour
             source.Stop();
             Destroy(source.gameObject);
             cardLoopSources.Remove(cardId);
+            loopGains.Remove(cardId);
         }
     }
 
@@ -377,7 +395,10 @@ public class SoundManager : MonoBehaviour
     public void SetCardLoopVolume(string cardId, float volume)
     {
         if (cardLoopSources.TryGetValue(cardId, out var source))
-            source.volume = volume;
+        {
+            loopGains[cardId] = volume;
+            source.volume = volume * GetNormalizedSFXVolume();
+        }
     }
 
     /// <summary>
@@ -385,7 +406,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     private float GetNormalizedBGMVolume()
     {
-        return GameDataManager.Instance.AudioData.masterVolume * GameDataManager.Instance.AudioData.bgmVolume;
+        return GameSettings.Current.audio.bgmVolume; // Master volume is applied once by AudioListener.
     }
 
     /// <summary>
@@ -393,7 +414,7 @@ public class SoundManager : MonoBehaviour
     /// </summary>
     private float GetNormalizedSFXVolume()
     {
-        return GameDataManager.Instance.AudioData.masterVolume * GameDataManager.Instance.AudioData.sfxVolume;
+        return GameSettings.Current.audio.sfxVolume;
     }
 
     /// <summary>

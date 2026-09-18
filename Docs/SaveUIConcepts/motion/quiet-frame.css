@@ -1,0 +1,44 @@
+/* B1: one frame only. The existing sprite supplies the nine-slice silhouette;
+   only that frame's color changes. Remove the old frame and offset outline. */
+body[data-motion=quiet] :is(.ui-btn:not(.close-btn),.record,.choice){
+  border-image:none;
+  border-color:transparent;
+}
+body[data-motion=quiet] :is(.ui-btn:not(.close-btn),.record,.choice)::before{
+  content:'';
+  display:block;
+  position:absolute;
+  inset:-8px;
+  border:0;
+  background-color:#777;
+  -webkit-mask-box-image:url('assets/UI_Panel-mask.svg') 5 / 8px / 0 stretch;
+  opacity:1;
+  pointer-events:none;
+  transition:background-color 140ms var(--ease);
+}
+body[data-motion=quiet] .ui-btn:not(.close-btn)::before{inset:-2px}
+body[data-motion=quiet] .ui-btn::after{display:none}
+body[data-motion=quiet] .ui-btn,
+body[data-motion=quiet] .ui-btn:not(:disabled):is(:active,.demo-press){background:#111;color:white}
+body[data-motion=quiet] .ui-btn:not(:disabled):is(:hover,.demo-hover) .face{color:white}
+body[data-motion=quiet] .ui-btn:not(:disabled):is(:hover,.demo-hover)::before,
+body[data-motion=quiet] .record:hover::before,
+body[data-motion=quiet] .choice:hover::before{background-color:#b4c7bd;opacity:1}
+body[data-motion=quiet] .ui-btn:is(.primary,.chosen,[aria-pressed=true])::before,
+body[data-motion=quiet] .record.selected::before,
+body[data-motion=quiet] .choice[aria-pressed=true]::before{background-color:var(--accent)}
+body[data-motion=quiet] .ui-btn.primary:not(:disabled):is(:hover,.demo-hover)::before{background-color:#9ce9c9}
+body[data-motion=quiet] .ui-btn:not(:disabled):is(:active,.demo-press)::before,
+body[data-motion=quiet] .choice:active::before{background-color:var(--accent);transition-duration:65ms}
+body[data-motion=quiet] .ui-btn.danger:not(:disabled):is(:hover,.demo-hover)::before{background-color:var(--red)}
+body[data-motion=quiet] .ui-btn:disabled::before{background-color:#777;opacity:1}
+body[data-motion=quiet] .ui-btn[aria-busy=true]::before{background-color:var(--accent)}
+body[data-motion=quiet] :is(.ui-btn,.record-select,.choice):focus-visible{outline:none}
+body[data-motion=quiet] .ui-btn:focus-visible::before,
+body[data-motion=quiet] .record:has(.record-select:focus-visible)::before,
+body[data-motion=quiet] .choice:focus-visible::before{background-color:#d9f8eb}
+body[data-motion=quiet] :is(.ui-btn,.choice):focus-visible .face,
+body[data-motion=quiet] .choice:focus-visible .choice-label,
+body[data-motion=quiet] .record-select:focus-visible .record-title{text-decoration:underline;text-underline-offset:5px}
+body[data-motion=quiet] .close-btn:focus-visible .face{color:var(--accent)}
+body.reduce :is(.ui-btn,.record,.choice)::before{transition-duration:1ms!important}

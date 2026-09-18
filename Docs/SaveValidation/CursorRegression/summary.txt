@@ -1,0 +1,135 @@
+2026-09-18 存档功能审计及鼠标回归
+
+工作区条目：核查前 162；清理后 108；加入本轮审计和回归证据后 117。
+最终构成：已跟踪改动 19（含 .gitignore 与 4 个既有无关文件）；新增 Unity 文件 30（含 meta）；Docs 文件 68。
+相关源码：14 个既有脚本 + 14 个新增脚本；其中新增为 11 个正式功能脚本、1 个编辑器生成工具、2 个验证脚本。
+
+Windows Development Build: Succeeded errors=0
+播放器回归：40 PASS，0 FAIL，已写 complete.txt；无 errors.txt/timeout.txt。
+鼠标：13 组场景，390 帧，780 次 Update/LateUpdate 采样，0 次不匹配。
+数据回归：521 PASS，0 FAIL；本轮重新执行 SaveFeatureValidation.Run。
+源码一致性：工作区与验证副本的 28 个相关 C# 文件逐字节相同。
+12 个归档方案 Prefab 的 GUID 不被现有场景或运行时 Prefab 引用。
+本次脚本及 .gitignore 的 git diff --check 通过；全仓仍有原有 Android 配置行尾空格。
+
+测试边界：独立工程与隔离数据目录中的 Development Player；没有使用玩家真实存档，没有人工移动物理鼠标或录制系统硬件光标。UI 按钮流程以直接事件调用验证。
+测试副本：C:\Users\22575\AppData\Local\Temp\WindowsSurvival-SaveValidation
+
+完整 Git 工作区清单（未提交、未推送）：
+ M .gitignore
+ D Assets/AddressableAssetsData/link.xml
+ D Assets/AddressableAssetsData/link.xml.meta
+ M Assets/Resources/ScriptableObject/Craft/Recipes/钢铲.asset
+ M Assets/Scripts/Chat/AfterChatFactory.cs
+ M Assets/Scripts/Chat/ChatManager.cs
+ M Assets/Scripts/Data/GameDataManager.cs
+ M Assets/Scripts/GameEvent/GameEventManager.cs
+ M Assets/Scripts/Main.cs
+ M Assets/Scripts/Manager/MouseManager.cs
+ M Assets/Scripts/Manager/SoundManager.cs
+ M Assets/Scripts/Manager/StartSceneManager.cs
+ M Assets/Scripts/Manager/TimeManager.cs
+ M Assets/Scripts/State/StateManager.cs
+ M Assets/Scripts/UI/Controls/HoverableButton.cs
+ M Assets/Scripts/UI/Screen/Windows/WindowsManager.cs
+ M Assets/Scripts/Utils/JsonManager.cs
+ M Assets/Scripts/Utils/MySceneManager.cs
+ M ProjectSettings/ProjectSettings.asset
+?? Assets/Editor/SaveFeatureValidation.cs
+?? Assets/Editor/SaveFeatureValidation.cs.meta
+?? Assets/Editor/SaveHubBuilder.cs
+?? Assets/Editor/SaveHubBuilder.cs.meta
+?? Assets/Resources/Prefabs/UI/SaveHub.prefab
+?? Assets/Resources/Prefabs/UI/SaveHub.prefab.meta
+?? Assets/Scripts/Data/GameSettings.cs
+?? Assets/Scripts/Data/GameSettings.cs.meta
+?? Assets/Scripts/Data/SaveDataContract.cs
+?? Assets/Scripts/Data/SaveDataContract.cs.meta
+?? Assets/Scripts/Data/SaveModels.cs
+?? Assets/Scripts/Data/SaveModels.cs.meta
+?? Assets/Scripts/Data/SaveRepository.cs
+?? Assets/Scripts/Data/SaveRepository.cs.meta
+?? Assets/Scripts/Data/SaveRuntimeValidation.cs
+?? Assets/Scripts/Data/SaveRuntimeValidation.cs.meta
+?? Assets/Scripts/Data/SaveSystem.cs
+?? Assets/Scripts/Data/SaveSystem.cs.meta
+?? Assets/Scripts/UI/Screen/SaveFileDialog.cs
+?? Assets/Scripts/UI/Screen/SaveFileDialog.cs.meta
+?? Assets/Scripts/UI/Screen/SaveHubButton.cs
+?? Assets/Scripts/UI/Screen/SaveHubButton.cs.meta
+?? Assets/Scripts/UI/Screen/SaveHubUI.cs
+?? Assets/Scripts/UI/Screen/SaveHubUI.cs.meta
+?? Assets/Scripts/UI/Screen/SaveJournalRow.cs
+?? Assets/Scripts/UI/Screen/SaveJournalRow.cs.meta
+?? Assets/Scripts/UI/Screen/SaveSettingRegistry.cs
+?? Assets/Scripts/UI/Screen/SaveSettingRegistry.cs.meta
+?? Assets/Scripts/UI/Screen/SaveWindowDrag.cs
+?? Assets/Scripts/UI/Screen/SaveWindowDrag.cs.meta
+?? Docs/SAVE_SYSTEM.md
+?? Docs/SaveUIConcepts/A-creation.png
+?? Docs/SaveUIConcepts/A-saves.png
+?? Docs/SaveUIConcepts/A-settings.png
+?? Docs/SaveUIConcepts/B-creation.png
+?? Docs/SaveUIConcepts/B-saves.png
+?? Docs/SaveUIConcepts/B-settings.png
+?? Docs/SaveUIConcepts/C-creation.png
+?? Docs/SaveUIConcepts/C-saves.png
+?? Docs/SaveUIConcepts/C-settings.png
+?? Docs/SaveUIConcepts/D-creation.png
+?? Docs/SaveUIConcepts/D-saves.png
+?? Docs/SaveUIConcepts/D-settings.png
+?? Docs/SaveUIConcepts/README.md
+?? Docs/SaveUIConcepts/authoring-archive.zip
+?? Docs/SaveUIConcepts/index.html
+?? Docs/SaveUIConcepts/motion/DESIGN.md
+?? Docs/SaveUIConcepts/motion/assets/UI_HoveredFrame.png
+?? Docs/SaveUIConcepts/motion/assets/UI_NameTooltip.png
+?? Docs/SaveUIConcepts/motion/assets/UI_Panel-mask.svg
+?? Docs/SaveUIConcepts/motion/assets/UI_Panel.png
+?? Docs/SaveUIConcepts/motion/assets/pixel.ttf
+?? Docs/SaveUIConcepts/motion/assets/sources.txt
+?? Docs/SaveUIConcepts/motion/assets/动力舱.png
+?? Docs/SaveUIConcepts/motion/assets/维生舱.png
+?? Docs/SaveUIConcepts/motion/assets/飞船外壳.png
+?? Docs/SaveUIConcepts/motion/assets/驾驶室.png
+?? Docs/SaveUIConcepts/motion/index.html
+?? Docs/SaveUIConcepts/motion/motion.css
+?? Docs/SaveUIConcepts/motion/motion.js
+?? Docs/SaveUIConcepts/motion/quiet-frame.css
+?? Docs/SaveUIConcepts/render-check.txt
+?? Docs/SaveUIConcepts/validation.txt
+?? Docs/SaveValidation/B1/README.md
+?? Docs/SaveValidation/B1/build.txt
+?? Docs/SaveValidation/B1/checks.txt
+?? Docs/SaveValidation/B1/complete.txt
+?? Docs/SaveValidation/B1/creation.png
+?? Docs/SaveValidation/B1/data-tests.txt
+?? Docs/SaveValidation/B1/history.png
+?? Docs/SaveValidation/B1/journal-selected.png
+?? Docs/SaveValidation/B1/journal.png
+?? Docs/SaveValidation/B1/save-settings.png
+?? Docs/SaveValidation/B1/settings-720p.png
+?? Docs/SaveValidation/B1/window-comparison.png
+?? Docs/SaveValidation/CHANGE_AUDIT.md
+?? Docs/SaveValidation/CursorRegression/before-checks.txt
+?? Docs/SaveValidation/CursorRegression/before-details.txt
+?? Docs/SaveValidation/CursorRegression/build.txt
+?? Docs/SaveValidation/CursorRegression/checks.txt
+?? Docs/SaveValidation/CursorRegression/complete.txt
+?? Docs/SaveValidation/CursorRegression/cursor-checks.txt
+?? Docs/SaveValidation/CursorRegression/data-tests.txt
+?? Docs/SaveValidation/CursorRegression/summary.txt
+?? Docs/SaveValidation/README.md
+?? Docs/SaveValidation/build.txt
+?? Docs/SaveValidation/button-click.png
+?? Docs/SaveValidation/button-hover.png
+?? Docs/SaveValidation/checks.txt
+?? Docs/SaveValidation/creation-buttons.png
+?? Docs/SaveValidation/creation.png
+?? Docs/SaveValidation/data-tests.txt
+?? Docs/SaveValidation/history-accent.png
+?? Docs/SaveValidation/history.png
+?? Docs/SaveValidation/play-mode.txt
+?? Docs/SaveValidation/settings-720p.png
+?? Docs/SaveValidation/settings-accent.png
+?? Docs/SaveValidation/window-comparison.png

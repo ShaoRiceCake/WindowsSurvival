@@ -1,0 +1,16 @@
+PASS random name button updates input
+PASS prefab button hover works while paused
+PASS prefab button hover exits while paused
+PASS title bar drag moves window
+PASS manual save
+PASS global volume and SFX channel gain
+PASS health restored
+PASS exit save retained
+PASS live snapshot share roundtrip
+PASS ordinary death preserves run
+PASS hardcore manual save
+PASS hardcore only latest
+PASS hardcore copy ordinary
+PASS hardcore death deletion
+PASS tutorial dialogue save
+PASS tutorial dialogue load

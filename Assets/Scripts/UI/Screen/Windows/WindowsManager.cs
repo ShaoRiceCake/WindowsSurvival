@@ -29,9 +29,8 @@ public class WindowsManager : MonoBehaviour
     private Dictionary<string, WindowBase> openedWindows = new(); // 当前所有打开的窗口，最小化的窗口也算打开的
     private WindowBase currentFocusedWindow; // 当前持有焦点的窗口，可能是openWindows[0]，可能是null
 
-    [SerializeField] private HoverableButton saveButton;
+    [SerializeField] private HoverableButton settingsButton;
     [SerializeField] private HoverableButton restButton;
-    [SerializeField] private HoverableButton quitButton;
 
     private HoverTipController restButtonTipController;
 
@@ -52,28 +51,7 @@ public class WindowsManager : MonoBehaviour
     #region Start
     private void Start()
     {
-        saveButton.onClick.AddListener(() =>
-        {
-            MouseManager.Instance.Wait();
-            GameDataManager.Instance.SaveAllData();
-            AnimationManager.Instance.ShowFloatingTipAbove(saveButton.transform, "保存成功！", -1.4f);
-        });
-
-        quitButton.onClick.AddListener(() =>
-        {
-            var window = OpenWindow("Custom", true) as CustomWindow;
-            window.SetContent($"退出到开始界面。\n{ColorManager.Alert("未保存的内容将会丢失！！")}\n确认退出吗？");
-            window.AddButton("保存并退出", () =>
-            {
-                GameDataManager.Instance.SaveAllData();
-                MySceneManager.LoadScene(0);
-            }, true);
-            window.AddButton("直接退出", () =>
-            {
-                MySceneManager.LoadScene(0);
-            }, true);
-            window.AddButton("取消", null);
-        });
+        settingsButton.onClick.AddListener(() => SaveHubUI.Instance.ShowGameMenu());
 
         // 初始化休息按钮
         InitRestButton();
@@ -434,6 +412,9 @@ public class WindowsManager : MonoBehaviour
     List<RaycastResult> results;
     private void Update()
     {
+        // A modal owns the entire pointer interaction, including window focusing.
+        if (SaveHubUI.Instance != null && SaveHubUI.Instance.IsOpen ||
+            SaveRuntime.Instance != null && SaveRuntime.Instance.TransitionActive) return;
         if (Input.GetMouseButtonDown(0)) // 检测鼠标左键点击
         {
             pointerData.position = Input.mousePosition;

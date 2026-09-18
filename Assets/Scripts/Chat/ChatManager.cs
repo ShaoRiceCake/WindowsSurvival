@@ -33,6 +33,8 @@ public class ChatManager : MonoBehaviour
     public ChatWindow chatWindow;
     public HoverableButton chatSpeedButton;
     private int curSpeed = 1;
+    private int appliedDefaultSpeed;
+    public bool AwaitingDelivery { get; private set; }
 
     #region 数据
 
@@ -74,7 +76,7 @@ public class ChatManager : MonoBehaviour
         EventManager.Instance.AddListener<ParagraphData>(EventType.TriggerParagraph, TriggerParagraph);
         if (!GameDataManager.Instance.GeneratedChatData.init)
         {
-            if (!GameDataManager.Instance.LoadData.loads[GameDataManager.Instance.curLoadIndex].skipGuide)
+            if (!GameDataManager.Instance.CurLoad.skipGuide)
             {
                 ParagraphToTriggeer.Add("一切的开始");
             }
@@ -91,7 +93,8 @@ public class ChatManager : MonoBehaviour
 
     private void Start()
     {
-        ChangeChatSpeed(1);
+        ApplyDefaultSpeed();
+        GameSettings.Changed += ApplyDefaultSpeed;
         chatSpeedButton.onClick.AddListener(() =>
         {
             if (curSpeed == 1)
@@ -109,8 +112,16 @@ public class ChatManager : MonoBehaviour
         });
     }
 
+    private void ApplyDefaultSpeed()
+    {
+        if (appliedDefaultSpeed == GameSettings.Current.dialogueSpeed) return;
+        appliedDefaultSpeed = GameSettings.Current.dialogueSpeed;
+        ChangeChatSpeed(appliedDefaultSpeed);
+    }
+
     public void OnDestroy()
     {
+        GameSettings.Changed -= ApplyDefaultSpeed;
         //移除对话段落监听
         EventManager.Instance.RemoveListener<ParagraphData>(EventType.TriggerParagraph, TriggerParagraph);
     }
@@ -170,7 +181,7 @@ public class ChatManager : MonoBehaviour
         //进入对话
         inParagraph = true;
         //从GeneratedChatDataList中加载所有已触发的对话数据
-        for (int i = 0; i < GeneratedChatDataList.Count-1; i++)
+        for (int i = 0; i < GeneratedChatDataList.Count; i++)
         {
             chatWindow.CreateMessage(GeneratedChatDataList[i].MessageSender, GeneratedChatDataList[i].Message);
         }
@@ -272,7 +283,9 @@ public class ChatManager : MonoBehaviour
 
         finalWaitTime /= curSpeed;
 
+        AwaitingDelivery = true;
         yield return new WaitForSeconds(finalWaitTime);
+        AwaitingDelivery = false;
 
         //将该对话加入已生成列表
         AddToGenerated(chatData);
@@ -322,24 +335,6 @@ public class ChatManager : MonoBehaviour
 
     public void ReturnToMainMenuAndDeleteSave()
     {
-        int index = GameDataManager.Instance.curLoadIndex;
-        //删除本存档
-        GameDataManager.Instance.LoadData.loads[index] = null;
-        GameDataManager.Instance.SaveLoadData();
-        //目标路径
-        string targetFolder = Application.persistentDataPath + "/GameData" + index + "/";
-        // 如果目标文件夹不存在，先创建
-        if (Directory.Exists(targetFolder))
-        {
-            Directory.Delete(targetFolder, true);
-        }
-        else
-        {
-            Debug.Log("存档不存在");
-            return;
-        }
-
-        //返回初始界面
-        MySceneManager.LoadScene(0);
+        SaveSystem.Die();
     }
 }

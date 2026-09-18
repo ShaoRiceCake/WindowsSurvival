@@ -1,0 +1,6 @@
+trial=0 handler_ms=422.8 button_interactable_after_click=True
+trial=0 ready_ms=5865.8
+trial=1 handler_ms=14.9 button_interactable_after_click=True
+trial=1 ready_ms=4297.0
+trial=2 handler_ms=13.7 button_interactable_after_click=True
+trial=2 ready_ms=3812.9

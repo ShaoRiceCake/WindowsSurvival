@@ -1,0 +1,5 @@
+PASS authored B display rows keep edits as draft.
+PASS Apply opens the timed confirmation.
+PASS Cancel restores display preferences and the same B category.
+PASS 15-second timeout restores old display preferences.
+PASS no Unity Error/Exception/Assert.

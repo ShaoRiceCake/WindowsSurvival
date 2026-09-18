@@ -1,0 +1,14 @@
+trial=0 handler_ms=7.9 button_interactable_after_click=False
+trial=0 ready_ms=6325.0
+PASS save-and-exit to main menu completed with automatic save
+trial=1 handler_ms=1.1 button_interactable_after_click=False
+trial=1 ready_ms=3942.2
+PASS save-and-exit to main menu completed with automatic save
+trial=2 handler_ms=0.9 button_interactable_after_click=False
+trial=2 ready_ms=3713.4
+PASS three repeated-click creation trials create exactly three worlds
+PASS pause More popup contains settings/menu/quit and dismisses without closing pause menu
+PASS manual save displays transition, saves once and restores pause menu
+PASS injected disk write failure stays in game, preserves last save, restores controls and shows failure
+PASS save-and-quit wrote a valid new auto snapshot and stopped Editor Play Mode
+PASS blocked input and cursor ownership observed through 4332 transition frames

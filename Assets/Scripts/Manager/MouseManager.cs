@@ -19,6 +19,40 @@ public class MouseManager : MonoBehaviour
 {
     private static MouseManager instance;
     public static MouseManager Instance => instance;
+    private static bool systemCursorForUI;
+    private static bool transitionCursor;
+    public static void SetTransitionCursor(bool visible)
+    {
+        transitionCursor = visible; RefreshCursorPresentation();
+    }
+
+    // One owner for both pointers. Modal windows request a handoff only on open/close.
+    public static void SetSystemCursorForUI(bool visible)
+    {
+        systemCursorForUI = visible;
+        RefreshCursorPresentation();
+    }
+
+    private static void RefreshCursorPresentation()
+    {
+        bool showSystem = systemCursorForUI || transitionCursor || instance == null;
+        if (Cursor.visible != showSystem) Cursor.visible = showSystem;
+        if (instance == null) return;
+        instance.GetComponent<Image>().enabled = !showSystem;
+        instance.animator.gameObject.SetActive(instance._isWaiting && !showSystem);
+    }
+
+    private void OnApplicationFocus(bool focused)
+    {
+        if (focused) RefreshCursorPresentation();
+    }
+
+    private void OnDestroy()
+    {
+        if (instance != this) return;
+        instance = null;
+        RefreshCursorPresentation();
+    }
 
     public const float DEFAULT_WAIT_TIME = 19f / 24;
 
@@ -40,7 +74,6 @@ public class MouseManager : MonoBehaviour
 
     public void Awake()
     {
-        Cursor.visible = false;
         if (instance != null && instance != this)
         {
             Destroy(gameObject);
@@ -52,6 +85,7 @@ public class MouseManager : MonoBehaviour
         }
         animator.gameObject.SetActive(false);
         ChangeMouseState(MouseState.Default);
+        RefreshCursorPresentation();
     }
 
     public void Update()
@@ -61,7 +95,6 @@ public class MouseManager : MonoBehaviour
 
     private void SetCursor()
     {
-        Cursor.visible = false;
         //设置鼠标位置
         Vector3 curTransform = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         curTransform.z = 0;
@@ -153,6 +186,7 @@ public class MouseManager : MonoBehaviour
     }
 
     #region 等待
+    public bool IsBusy => isDragging || _isWaiting;
     private float _startTime;   // 等待开始时间
     private float _endTime;     // 等待结束时间
     private bool _isWaiting;    // 当前是否在等待
@@ -168,7 +202,7 @@ public class MouseManager : MonoBehaviour
         SetMouseVisible(false);
 
         // 播放动画
-        animator.gameObject.SetActive(true);
+        RefreshCursorPresentation();
         animator.Play("Waiting");
 
         PublicMono.Instance.StartCoroutine(WaitingCo());

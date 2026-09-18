@@ -30,7 +30,8 @@ public class Main : MonoBehaviour
     private void Awake()
     {
         // 设置分辨率
-        SetResolution();
+        SaveSystem.LoadPendingBeforeManagers();
+        if (!Application.isEditor) GameSettings.ApplyDisplay();
         //SetFrameRate();
 
         // 初始化卡牌工厂

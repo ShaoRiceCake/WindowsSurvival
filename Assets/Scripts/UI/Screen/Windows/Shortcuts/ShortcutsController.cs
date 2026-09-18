@@ -32,6 +32,7 @@ public class ShortcutsController : MonoBehaviour
         {
             if (layoutTransform.GetChild(i).TryGetComponent<CustomMenuItem>(out var shortcut))
             {
+                if (shortcut.name == "Settings") continue; // Global settings are not a desktop window or tutorial unlock.
                 shortcuts.Add(shortcut.name, shortcut);
                 SetOpened(shortcut, false);
                 shortcut.onClick.AddListener(() =>

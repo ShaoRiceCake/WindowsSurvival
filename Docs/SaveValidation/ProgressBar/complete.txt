@@ -1,0 +1,1 @@
+Unity Editor Play Mode: save/load bar geometry and actual rendered pixels checked at 0/25/50/75/100 percent.

@@ -36,6 +36,7 @@ public class GameEventManager : IManager
 
     public void Reset()
     {
+        TrendValue = 0;
         AllEvents = new();
         InvasionEventConfig = new();
         UpdateManager.Instance.GameEventUpdate.RemoveListener(Update);

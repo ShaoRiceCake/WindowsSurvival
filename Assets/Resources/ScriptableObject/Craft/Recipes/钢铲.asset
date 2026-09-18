@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652377b71f7eb0b4b81f661c252dacc6, type: 3}
   m_Name: "\u94A2\u94F2"
   m_EditorClassIdentifier: 
-  cardId: "\u94A2\u9524"
+  cardId: "\u94A2\u94F2"
   craftType: 3
   materials:
   - cardId: "\u94A2\u6750"

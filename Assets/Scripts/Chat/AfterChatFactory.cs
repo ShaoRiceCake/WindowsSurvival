@@ -313,8 +313,8 @@ public static class AfterChatFactory
     {
         ChatManager.Instance.ParagraphToTriggeer.Clear();
         ChatManager.Instance.InterruptParagraphData=null;
-        // 延迟1秒执行删除存档和返回主菜单的操作
-        ChatManager.Instance.Invoke(nameof(ChatManager.ReturnToMainMenuAndDeleteSave), 2f);
+        // 普通世界线允许回档；硬核世界线死亡后删除。
+        SaveSystem.Die();
 
     }
 }

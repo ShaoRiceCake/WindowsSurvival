@@ -9,22 +9,21 @@ public class GameDataManager
     private static GameDataManager instance = new();
     public static GameDataManager Instance => instance;
 
-    public int curLoadIndex; // 当前存档索引
-
-    public string CurLoadName => "GameData" + curLoadIndex.ToString(); // 当前存档名称
-
-    public Load CurLoad => loadData.loads[curLoadIndex]; // 当前存档
+    public int curLoadIndex; // Legacy editor commands only.
+    public string CurLoadName => "GameData" + curLoadIndex;
+    public Load CurLoad => new Load(TimeData?.curTime ?? new DateTime(2020, 1, 1), SaveSystem.Current?.skipGuide ?? true);
 
     private GameDataManager()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        if (currentScene.buildIndex == 0) return;
+        if (SceneManager.GetActiveScene().buildIndex != 0) LoadAllData(0);
+    }
 
-        // 加载存档数据
-        LoadLoadData();
-        // 从UIScene直接打开默认跳过新手教程
-        loadData.loads[0] = new Load(new DateTime(2020, 1, 1, 0, 0, 0), true);
-        LoadAllData(0);
+    public void LoadSnapshot(SavePayload payload)
+    {
+        SaveDataContract.Validate(payload);
+        JsonManager.Source = payload.files;
+        try { LoadAllData(0); }
+        finally { JsonManager.Source = null; }
     }
 
     public void LoadAllData(int index)
@@ -45,7 +44,7 @@ public class GameDataManager
         // 状态数据 
         stateData = JsonManager.LoadData<StateData>(CurLoadName, "State");
         // 音频数据
-        audioData = JsonManager.LoadData<AudioData>(CurLoadName, "Audio");
+        audioData = GameSettings.Current.audio;
         // 科技数据
         technologyData = JsonManager.LoadData<TechnologyData>(CurLoadName, "Technology");
         // 装备数据
@@ -70,7 +69,19 @@ public class GameDataManager
         countData = JsonManager.LoadData<CountData>(CurLoadName, "CountData");
     }
 
-    public void SaveAllData()
+    public void SaveAllData() => SaveSystem.RequestSave(SaveKind.Manual);
+
+    public SavePayload CaptureSnapshot()
+    {
+        var payload = new SavePayload();
+        JsonManager.Capture = payload.files;
+        try { CaptureAllData(); }
+        finally { JsonManager.Capture = null; }
+        SaveDataContract.Validate(payload);
+        return payload;
+    }
+
+    private void CaptureAllData()
     {
         // 玩家背包
         SavePlayerBag();
@@ -81,7 +92,8 @@ public class GameDataManager
         // 状态
         SaveStateData();
         // 音频数据
-        SaveAudioData();
+        // Audio preferences are global and excluded from timeline snapshots; compatibility key only.
+        JsonManager.SaveData(new AudioData(), CurLoadName, "Audio");
         // 科技数据
         SaveTechnologyData();
         // 装备数据
@@ -105,19 +117,6 @@ public class GameDataManager
         // 保存计数数据
         SaveCountData();
 
-        if (loadData == null)
-        {
-            loadData = new LoadData();
-            for (int i = 0; i < loadData.loads.Length; i++)
-            {
-                loadData.loads[i] = new Load();
-            }
-        }
-
-        // 保存时间
-        loadData.loads[curLoadIndex].gameTime = timeData.curTime;
-        // 保存存档数据
-        SaveLoadData();
     }
 
     #region 存档数据
@@ -250,28 +249,31 @@ public class GameDataManager
     public void SetMasterVolume(float volume)
     {
         audioData.masterVolume = Mathf.Clamp01(volume);
+        GameSettings.Save();
         onBGMVolumeChanged?.Invoke();
     }
 
     public void SetBGMVolume(float volume)
     {
         audioData.bgmVolume = Mathf.Clamp01(volume);
+        GameSettings.Save();
         onBGMVolumeChanged?.Invoke();
     }
 
     public void SetSFXVolume(float volume)
     {
         audioData.sfxVolume = Mathf.Clamp01(volume);
+        GameSettings.Save();
     }
 
     public void SaveAudioData()
     {
-        JsonManager.SaveData(audioData, CurLoadName, "Audio");
+        GameSettings.Save();
     }
 
     public void LoadAudioData()
     {
-        audioData = JsonManager.LoadData<AudioData>(CurLoadName, "Audio");
+        audioData = GameSettings.Current.audio;
     }
 
     #endregion

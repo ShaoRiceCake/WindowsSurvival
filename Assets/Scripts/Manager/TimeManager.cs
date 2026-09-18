@@ -23,6 +23,9 @@ public class TimeManager : IManager
     private bool timePassShut = false;      // 时间流逝停止
     private float unfreezeTime = 0;         // 时间流逝暂停结束时间
 
+    private int activeAdvances;
+    public bool IsAdvancing => activeAdvances > 0 || intentionQueue.Count > 0;
+
     public void Init()
     {
         var timeData = GameDataManager.Instance.TimeData;
@@ -46,6 +49,7 @@ public class TimeManager : IManager
 
     public void Reset()
     {
+        activeAdvances = 0; intentionQueue.Clear(); timePassShut = false; unfreezeTime = 0;
     }
 
     public void AddTime(int minutes, UnityAction onEnd = null)
@@ -55,6 +59,9 @@ public class TimeManager : IManager
 
     private IEnumerator AddTimeCo(int minutes, UnityAction onEnd = null)
     {
+        activeAdvances++;
+        try
+        {
         timePassShut = false;
 
         EventManager.Instance.TriggerEvent(EventType.StartChangeTime);
@@ -106,6 +113,8 @@ public class TimeManager : IManager
 
         // 一次完整的时间流逝结束
         onEnd?.Invoke();
+        }
+        finally { activeAdvances = Mathf.Max(0, activeAdvances - 1); }
     }
 
     private void WaitForTimePass(int minutes)

@@ -1,0 +1,9 @@
+Unity preview validation:
+- 12 renders produced at 1920 x 1080; no text-height overflow reported.
+- All 12 pages visually inspected.
+Gallery validation (headless Playwright):
+- Four-way and single-variant views switch correctly.
+- Creation and settings page tabs load all four matching images.
+- Zoom dialog opens a full-resolution image and closes with Escape.
+- Final reload has no console errors.
+Design previews only; production SaveHub was not replaced.

@@ -76,3 +76,7 @@ crashlytics-build.properties
 .idea/
 Packages/manifest.json
 Packages/packages-lock.json
+
+# Local browser verification intermediates; curated evidence lives in Docs.
+/.playwright-cli/
+/output/playwright/

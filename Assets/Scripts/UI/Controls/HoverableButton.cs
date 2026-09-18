@@ -21,6 +21,7 @@ public class HoverableButton : MonoBehaviour, IPointerClickHandler, IPointerEnte
 
     public string hoveredAudio = "临时悬浮";
     public bool playHoverSound = true;
+    public bool useUnscaledTime;
 
     public Color currentColor { get; set; }
     public Color hoveredColor { get; set; } = ColorManager.White; // 鼠标悬停时的颜色，默认为白色
@@ -124,7 +125,7 @@ public class HoverableButton : MonoBehaviour, IPointerClickHandler, IPointerEnte
     {
         if (!interactable) return;
 
-        if (playHoverSound)
+        if (playHoverSound && SoundManager.Instance != null)
         SoundManager.Instance.PlaySound(hoveredAudio, true,0.2f);
 
         onPointerEnter?.Invoke();
@@ -135,7 +136,7 @@ public class HoverableButton : MonoBehaviour, IPointerClickHandler, IPointerEnte
             graphic.gameObject.SetActive(true); // 确保图像可见
             graphic.DOKill(); // 停止所有正在进行的动画
             graphic.DOFade(1f, fadeTransition)
-                .SetEase(Ease.OutQuad)
+                .SetUpdate(useUnscaledTime).SetEase(Ease.OutQuad)
                 .OnStart(() =>
                 {
                     ChangeColor(ColorManager.Black); // 反色
@@ -155,7 +156,7 @@ public class HoverableButton : MonoBehaviour, IPointerClickHandler, IPointerEnte
         {
             graphic.DOKill(); // 停止所有正在进行的动画
             graphic.DOFade(0f, fadeTransition)
-                .SetEase(Ease.InQuad)
+                .SetUpdate(useUnscaledTime).SetEase(Ease.InQuad)
                 .OnComplete(() => graphic.gameObject.SetActive(false)) // 动画完成后禁用图像
                 .OnStart(() => ChangeColor(currentColor));
         }

@@ -1,0 +1,26 @@
+PASS authored prefab uses a solid rectangle
+PASS save-0 fixed left edge and correct fill width
+PASS save-0 rendered solid mint fill ends exactly at progress with no faded caps
+PASS save-25 fixed left edge and correct fill width
+PASS save-25 rendered solid mint fill ends exactly at progress with no faded caps
+PASS save-50 fixed left edge and correct fill width
+PASS save-50 rendered solid mint fill ends exactly at progress with no faded caps
+PASS save-75 fixed left edge and correct fill width
+PASS save-75 rendered solid mint fill ends exactly at progress with no faded caps
+PASS save-100 fixed left edge and correct fill width
+PASS save-100 rendered solid mint fill ends exactly at progress with no faded caps
+PASS load-0 fixed left edge and correct fill width
+PASS load-0 rendered solid mint fill ends exactly at progress with no faded caps
+PASS load-25 fixed left edge and correct fill width
+PASS load-25 rendered solid mint fill ends exactly at progress with no faded caps
+PASS load-50 fixed left edge and correct fill width
+PASS load-50 rendered solid mint fill ends exactly at progress with no faded caps
+PASS load-75 fixed left edge and correct fill width
+PASS load-75 rendered solid mint fill ends exactly at progress with no faded caps
+PASS load-100 fixed left edge and correct fill width
+PASS load-100 rendered solid mint fill ends exactly at progress with no faded caps
+PASS reopening resets progress to the left edge
+PASS fast completion stays visible and blocks input after 0.2 seconds
+PASS Finish fills the complete track
+PASS minimum 0.8 second display duration retained
+PASS completion releases input blocking

@@ -61,6 +61,7 @@ public class StateManager : IManager
 
     public void Reset()
     {
+        gameOver = false;
         IsResting = false;
         _lastDangerLevel = DangerLevelEnum.None;
         WaterLevel = new();
@@ -617,7 +618,7 @@ public class StateManager : IManager
         StopResting();
         // 停止时间流逝
         TimeManager.Instance.ShutTimePass();
-        WindowsManager.Instance.OpenWindow("Chat", true);
+        SaveSystem.Die();
     }
     #endregion
 

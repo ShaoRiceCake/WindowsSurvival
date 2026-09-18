@@ -1,0 +1,40 @@
+PASS main menu custom cursor stable (30 frames, Update + LateUpdate)
+PASS main menu modal cursor stable (30 frames, Update + LateUpdate)
+PASS random name button updates input
+PASS prefab button hover works while paused
+PASS prefab button hover exits while paused
+PASS title bar drag moves window
+PASS no redundant captions
+PASS journal layout and only all/auto/manual tabs
+PASS first journal record expanded
+PASS journal selection collapses previous and expands auto retain action
+PASS selected record preserves text and surface colors
+PASS numeric setting controls have visible ASCII labels
+PASS auto interval disabled while timer off; exit retention still editable
+PASS game scene has custom cursor owner
+PASS game custom cursor stable after scene entry (30 frames, Update + LateUpdate)
+PASS game modal cursor stable cycle 0 (30 frames, Update + LateUpdate)
+PASS custom cursor restored cycle 0 (30 frames, Update + LateUpdate)
+PASS game modal cursor stable cycle 1 (30 frames, Update + LateUpdate)
+PASS custom cursor restored cycle 1 (30 frames, Update + LateUpdate)
+PASS game modal cursor stable cycle 2 (30 frames, Update + LateUpdate)
+PASS custom cursor restored cycle 2 (30 frames, Update + LateUpdate)
+PASS modal suppresses waiting cursor without duplicate (30 frames, Update + LateUpdate)
+PASS closing modal preserves active wait cursor
+PASS custom cursor restored after waiting (30 frames, Update + LateUpdate)
+PASS manual save
+PASS global volume and SFX channel gain
+PASS read action shows loading feedback
+PASS custom cursor stable after rewind scene reload (30 frames, Update + LateUpdate)
+PASS health restored
+PASS legacy exit request normalized to auto
+PASS save and exit button writes auto and returns to menu
+PASS custom cursor restored after exit to main menu (30 frames, Update + LateUpdate)
+PASS live snapshot share roundtrip
+PASS ordinary death preserves run
+PASS hardcore manual save
+PASS hardcore only latest
+PASS hardcore copy ordinary
+PASS hardcore death deletion
+PASS tutorial dialogue save
+PASS tutorial dialogue load

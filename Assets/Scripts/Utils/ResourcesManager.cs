@@ -216,6 +216,9 @@ public class ResourcesManager
         Resources.UnloadAsset(assetToUnload);
     }
 
+    // Scene loading owns resource reclamation; discard references to cancelled async requests.
+    public void ClearSceneCache() => resourceMap.Clear();
+
     public void UnloadUnusedAssets(UnityAction onAssetUnloaded = null)
     {
         resourceMap.Clear();

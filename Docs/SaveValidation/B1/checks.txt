@@ -1,0 +1,25 @@
+PASS random name button updates input
+PASS prefab button hover works while paused
+PASS prefab button hover exits while paused
+PASS title bar drag moves window
+PASS no redundant captions
+PASS journal layout and only all/auto/manual tabs
+PASS first journal record expanded
+PASS journal selection collapses previous and expands auto retain action
+PASS selected record preserves text and surface colors
+PASS numeric setting controls have visible ASCII labels
+PASS auto interval disabled while timer off; exit retention still editable
+PASS manual save
+PASS global volume and SFX channel gain
+PASS read action shows loading feedback
+PASS health restored
+PASS legacy exit request normalized to auto
+PASS save and exit button writes auto and returns to menu
+PASS live snapshot share roundtrip
+PASS ordinary death preserves run
+PASS hardcore manual save
+PASS hardcore only latest
+PASS hardcore copy ordinary
+PASS hardcore death deletion
+PASS tutorial dialogue save
+PASS tutorial dialogue load

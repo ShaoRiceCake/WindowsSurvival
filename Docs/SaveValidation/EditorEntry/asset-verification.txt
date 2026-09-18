@@ -1,0 +1,7 @@
+PASS root workspace and Unity Editor Play Mode copy are byte-identical for scene, prefab and all files changed in this repair.
+5042fcf20808a790b008f0e3efde5c2a027dfce303b6549eb3ad7b74f45f110f  Assets/Scenes/StartScene.unity
+fd74c6a3268db03bf647e60a59cfd41c69c3912cf6c74767cee78af5043eb9c6  Assets/Resources/Prefabs/UI/SaveHub.prefab
+49aea6fabc50bcd7b26ecb727feeeba4fd0701bd8b4a365d519a44a6cfd75de1  Assets/Scripts/Manager/StartSceneManager.cs
+d6e768ace6f20134044eb10869bd790f591a93569c4c372798c17192e512ef9e  Assets/Scripts/UI/Screen/SaveHubUI.cs
+df1b2588de37d351bf19c13156cea9cd778a7a49601af945d0d12643ab39faba  Assets/Editor/SaveHubBuilder.cs
+7153d35f1ed399cd752dadd78683e815f04b6bcd32f54d70293ba17795024daf  Assets/Editor/SaveFeatureValidation.cs

@@ -1,0 +1,4 @@
+PASS Unity Editor Play Mode: real main-menu Button pointer events and raycast targets, open/close, settings, create via UI, manual save, UI rewind, exit save, death, return to menu and reopen.
+PASS no legacy save UI objects (including inactive).
+PASS no Unity Error/Exception/Assert.
+PASS authored scene and prefab used without test-time rebuild.

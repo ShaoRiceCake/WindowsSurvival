@@ -1,0 +1,8 @@
+settings-game-desktop.png Category-游戏 frame-visible=True cull=False color=RGBA(0.392, 0.871, 0.682, 1.000)
+settings-game-desktop.png Resume frame-visible=True cull=False color=RGBA(0.392, 0.871, 0.682, 1.000)
+settings-long-name-desktop.png Category-游戏 frame-visible=True cull=False color=RGBA(0.392, 0.871, 0.682, 1.000)
+settings-long-name-desktop.png Resume frame-visible=True cull=False color=RGBA(0.392, 0.871, 0.682, 1.000)
+settings-sound-desktop.png Category-声音 frame-visible=True cull=False color=RGBA(0.392, 0.871, 0.682, 1.000)
+settings-sound-desktop.png Resume frame-visible=True cull=False color=RGBA(0.392, 0.871, 0.682, 1.000)
+settings-storage-desktop.png Category-存档 frame-visible=True cull=False color=RGBA(0.392, 0.870, 0.682, 1.000)
+settings-storage-desktop.png Resume frame-visible=True cull=False color=RGBA(0.392, 0.871, 0.682, 1.000)

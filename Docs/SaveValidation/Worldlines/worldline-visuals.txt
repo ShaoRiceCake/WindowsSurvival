@@ -1,0 +1,9 @@
+PASS summary uses latest point while list has one entry per worldline
+PASS worldline name fits authored title area
+PASS hover changes original border only, preserving fill and text
+PASS load arrow moves without moving hit area
+PASS press sinks label by one pixel
+PASS hover and press preserve clickable bounds
+PASS release restores label and arrow
+PASS system cursor ownership stable for 120 frames with management menu open
+PASS Escape/close dismisses management before closing the window

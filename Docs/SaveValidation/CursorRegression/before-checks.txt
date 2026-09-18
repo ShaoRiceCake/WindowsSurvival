@@ -1,0 +1,2 @@
+PASS main menu custom cursor stable (30 frames, Update + LateUpdate)
+FAIL main menu modal cursor stable (30 frames, Update + LateUpdate)

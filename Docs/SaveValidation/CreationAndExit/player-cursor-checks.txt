@@ -1,0 +1,13 @@
+main menu custom cursor stable: samples=60, mismatches=0
+main menu modal cursor stable: samples=60, mismatches=0
+game custom cursor stable after scene entry: samples=60, mismatches=0
+game modal cursor stable cycle 0: samples=60, mismatches=0
+custom cursor restored cycle 0: samples=60, mismatches=0
+game modal cursor stable cycle 1: samples=60, mismatches=0
+custom cursor restored cycle 1: samples=60, mismatches=0
+game modal cursor stable cycle 2: samples=60, mismatches=0
+custom cursor restored cycle 2: samples=60, mismatches=0
+modal suppresses waiting cursor without duplicate: samples=60, mismatches=0
+custom cursor restored after waiting: samples=60, mismatches=0
+custom cursor stable after rewind scene reload: samples=60, mismatches=0
+custom cursor restored after exit to main menu: samples=60, mismatches=0

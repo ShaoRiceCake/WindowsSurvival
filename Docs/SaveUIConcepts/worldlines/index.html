@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>世界线 · B 版入口页设计稿</title><link rel="stylesheet" href="worldlines.css"></head>
+<body>
+<header class="workbench"><div><span class="study-label">B / 补充页面设计</span><h1>世界线</h1><p>选择世界线，再选择要载入的时间点。</p></div><nav aria-label="演示状态"><button data-demo="normal" aria-pressed="true">普通世界线</button><button data-demo="hardcore">硬核世界线</button><button data-demo="many">很多世界线</button><button data-demo="empty">空列表</button></nav><span class="prototype-label">交互设计稿 · 演示数据</span></header>
+<main class="stage"><section class="window" aria-label="世界线选择窗口">
+<header class="titlebar"><span>世界线</span><button class="button close" id="close" aria-label="关闭窗口"><span>×</span></button></header>
+<div class="workspace"><aside class="sidebar"><div class="sidebar-tools"><button class="button" id="create"><span>+ 新建世界线</span></button><button class="button" id="import"><span>导入</span></button></div><div class="list-caption"><span>我的世界线</span><span id="count"></span></div><div id="world-list" class="world-list" aria-label="世界线列表"></div></aside><article class="details" id="details"></article></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+</section><div class="closed" hidden><p>窗口已关闭</p><button class="button" id="reopen"><span>重新打开</span></button></div></main>
+<footer class="design-note"><span>原素材框体 · 原边框变色 · 底色与文字保持不变</span><a href="../motion/">查看已选的 B1 动效</a></footer>
+<dialog id="dialog" class="window dialog"><header class="titlebar"><span id="dialog-title"></span><button class="button close" id="dialog-close" aria-label="取消"><span>×</span></button></header><form id="dialog-form"><div id="dialog-content"></div><div class="dialog-actions"><button class="button" type="button" id="cancel"><span>取消</span></button><button class="button primary" id="confirm" type="submit"><span>确认</span></button></div></form></dialog>
+<input type="file" id="file" accept=".wssave" hidden>
+<script src="worldlines.js"></script></body></html>

@@ -1,0 +1,1 @@
+Development player save/load/death tests completed; save-and-quit wrote a valid automatic snapshot and reached application quitting.

@@ -1,0 +1,4 @@
+UI_Panel: UI.psd slice 32x33 border 5; UI_HoveredFrame: UI.psd slice 24x24 border 4; UI_NameTooltip: UI.psd slice 30x14 border 4.
+Place sprites: Resources/ScriptableObject/Place/*.asset placeImage.
+Font: Art/Font/tianwangxingxiangsu.ttf
+Accent: #64DEAE; warning: ColorManager.Red #FF403B.

@@ -12,10 +12,12 @@ public class GameDataManager
     public int curLoadIndex; // Legacy editor commands only.
     public string CurLoadName => "GameData" + curLoadIndex;
     public Load CurLoad => new Load(TimeData?.curTime ?? new DateTime(2020, 1, 1), SaveSystem.Current?.skipGuide ?? true);
+    public ClimateData ClimateData { get; private set; } = new();
 
     private GameDataManager()
     {
-        if (SceneManager.GetActiveScene().buildIndex != 0) LoadAllData(0);
+        // Main loads a validated snapshot before managers initialize. Never deserialize
+        // legacy disk data merely because the game scene was opened in the editor.
     }
 
     public void LoadSnapshot(SavePayload payload)
@@ -28,6 +30,7 @@ public class GameDataManager
 
     public void LoadAllData(int index)
     {
+        ClimateData = JsonManager.LoadData<ClimateData>("GameData" + index, "ClimateData");
         curLoadIndex = index;
         // 玩家背包
         playerBagData = JsonManager.LoadData<PlayerBag>(CurLoadName, "PlayerBag");
@@ -83,6 +86,7 @@ public class GameDataManager
 
     private void CaptureAllData()
     {
+        JsonManager.SaveData(ClimateData, CurLoadName, "ClimateData");
         // 玩家背包
         SavePlayerBag();
         // 上次地点

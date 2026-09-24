@@ -113,13 +113,18 @@ public static class CardFactory
         if (configCache.TryGetValue(cardId, out var config))
         {
             // 获取图集的所有图片
-            var sprites = Resources.LoadAll<Sprite>("Sprites/" + config.CardType.ToString());
-
             if (string.IsNullOrEmpty(imagePath))
                 imagePath = config.CardImagePath;
+            string atlas = config.CardType.ToString();
+            if (imagePath.Contains("/"))
+            {
+                var parts = imagePath.Split('/');
+                atlas = parts[0]; imagePath = parts[1];
+            }
+            var sprites = Resources.LoadAll<Sprite>("Sprites/" + atlas);
 
             // 找到图片的索引
-            if (int.TryParse(imagePath, out var index) && index < sprites.Length)
+            if (int.TryParse(imagePath, out var index) && index >= 0 && index < sprites.Length)
             {
                 return sprites[index];
             }
@@ -216,6 +221,14 @@ public static class CardFactory
             return config.CardExtraInfo;
         }
         throw new ArgumentException($"不存在ID为{cardId}的卡牌");
+    }
+
+    // Restore only a newly introduced component in trial saves; preserve any existing cooking progress.
+    public static void RestoreMissingCookComponent(Card card)
+    {
+        if (card.TryGetComponent<CookComponent>(out _) || !configCache.TryGetValue(card.CardId, out var config) || !config.CanCook) return;
+        card.AddComponent(new CookComponent(config.CookTime, config.OutcomeCardId));
+        card.AssignComponentValues();
     }
 
     public static Card CreateCard(string cardId)

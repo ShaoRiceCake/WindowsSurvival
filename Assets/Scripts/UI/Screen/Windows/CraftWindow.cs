@@ -221,7 +221,7 @@ public class CraftWindow : WindowBase
 
         // 显示卡牌
         slot.Clear();
-        slot.DisplayCard(recipe.CardInstance, 1, false);
+        slot.DisplayCard(recipe.CardInstance, Mathf.Max(1, recipe.outputCount), recipe.outputCount > 1);
 
         slot.GetComponentInChildren<HoverableButton>().onClick.RemoveAllListeners();
         slot.GetComponentInChildren<HoverableButton>().onClick.AddListener(() =>
@@ -312,7 +312,7 @@ public class CraftWindow : WindowBase
         if (currentSelectedRecipe == null) return;
 
         // 制作成功，掉落卡牌
-        void CraftSucceeded(Card outcomeCard)
+        void CraftSucceeded(List<Card> outcomeCards)
         {
             AnimationManager.Instance.PlayDropCards(slot.transform, () =>
             {
@@ -320,8 +320,9 @@ public class CraftWindow : WindowBase
 
                 // 掉落制作出的卡牌
                 // 如果是建筑卡牌或者是有内容物的卡牌，则优先掉落到环境里
+                var outcomeCard = outcomeCards[0];
                 var toPlayerBag = outcomeCard.CardType != CardType.Construction && !outcomeCard.TryGetComponent<InnerContentsComponent>(out _);
-                GameManager.Instance.AddCardWithTween(outcomeCard, toPlayerBag, slot.transform.position);
+                GameManager.Instance.AddCardsWithTween(outcomeCards, toPlayerBag, slot.transform.position);
 
                 // 刷新显示
                 RefreshDisplay();

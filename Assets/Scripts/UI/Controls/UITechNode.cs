@@ -68,6 +68,8 @@ public class UITechNode : HoverableButton
         {
             var image = ObjectBufferPool.Instance.Get(recipeIconPrefab, recipeLayout).GetComponent<Image>();
             image.sprite = recipe.CardImage;
+            var tip = image.GetComponent<HoverTipController>() ?? image.gameObject.AddComponent<HoverTipController>();
+            tip.SetTip(recipe.cardId + (recipe.outputCount > 1 ? $"（每次产出{recipe.outputCount}个）" : "") + "\n" + recipe.CardInstance.CardDesc);
         }
 
         techName.text = techNode.techName;
@@ -117,6 +119,8 @@ public class UITechNode : HoverableButton
     private void Display(bool playAnim)
     {
         SetColor(baseLayer.transform, ColorManager.White);
+        SetRecipeVisualColor(ColorManager.White);
+        techName.color = ColorManager.White;
 
         // 显示研究进度
         var progress = TechnologyManager.Instance.GetStudyProgress(techNode);
@@ -168,9 +172,19 @@ public class UITechNode : HoverableButton
     {
         lockIcon.SetActive(true);
         SetColor(baseLayer.transform, ColorManager.DarkGrey);
+        SetRecipeVisualColor(ColorManager.DarkGrey);
+        techName.color = ColorManager.DarkGrey;
         fillMask.gameObject.SetActive(false);
         progressText.gameObject.SetActive(false);
         Dequeue();
+    }
+
+    private void SetRecipeVisualColor(Color color)
+    {
+        foreach (var image in recipeLayout.GetComponentsInChildren<Image>(true))
+        {
+            image.color = color;
+        }
     }
 
     private void Complished()

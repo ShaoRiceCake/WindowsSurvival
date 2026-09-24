@@ -110,6 +110,17 @@ public class CardDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         }
 
         // 处理快捷交互
+        var modification = currentObject.GetComponentInParent<ModificationRow>();
+        if (modification != null)
+        {
+            int before = sourceSlot.StackNum;
+            modification.HandleDrop(sourceSlot.Cards, pickedCount, out string hint);
+            int remaining = pickedCount - (before - sourceSlot.StackNum);
+            if (remaining > 0) AnimateCardReturn(remaining, hint);
+            else sourceSlot.DontRefresh = false;
+            EventManager.Instance.TriggerEvent(EventType.PutDownCard);
+            return;
+        }
         var targetSlot = currentObject.GetComponentInParent<CardSlot>();
         if (targetSlot != null && targetSlot.Interactable)
         {

@@ -13,7 +13,7 @@ public class BurntFood : CookableCard
                 { PlayerStateEnum.Hunger, 10 },
                 { PlayerStateEnum.Hydration, -20 },
                 { PlayerStateEnum.Health, -5 },
-                { PlayerStateEnum.BodyTemperature, 20 }
+                { PlayerStateEnum.BodyTemperature, 2 }
             },
             sound: "吃_01");
     }

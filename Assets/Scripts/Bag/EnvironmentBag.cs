@@ -27,6 +27,16 @@ public class EnvironmentBag : Bag
         this.placeType = placeType;
     }
 
+    public void SetCable(bool installed)
+    {
+        hasCable = installed;
+        if (!installed)
+            foreach (var card in GetAllCards(false))
+                if (card.TryGetComponent<PowerConsumptionComponent>(out var power)) power.DisconnectPower();
+        EventManager.Instance.TriggerEvent(EventType.RefreshEnvironmentState,
+            new RefreshEnvironmentStateArgs(placeType, EnvironmentStateEnum.HasCable) { hasCable = installed });
+    }
+
     #region Init
     protected override void FirstInit()
     {
@@ -39,6 +49,7 @@ public class EnvironmentBag : Bag
     public override void Init()
     {
         base.Init();
+        RemoveObsoleteSaltDrops();
         DeepExploreDropList.Init();
         EventManager.Instance.AddListener(EventType.UpdateBegin, OnEnvUpdateBegin);
         EventManager.Instance.AddListener<float>(EventType.UpdateSunlight, OnUpdateSunlight);
@@ -64,7 +75,7 @@ public class EnvironmentBag : Bag
 
         // 室温
         stateDict.Add(EnvironmentStateEnum.RoomTemperature,
-            new State(PlaceData.initialBagStateConfig.roomTemperature, 400, normParam: -200));
+            new State(PlaceData.initialBagStateConfig.roomTemperature, 200, minValue: -100, precision: 3));
 
         // 光照
         var thresholds = new List<StateThreshold>
@@ -82,10 +93,30 @@ public class EnvironmentBag : Bag
         stateDict.Add(EnvironmentStateEnum.Brightness, state);
     }
 
+    // Remove only the obsolete V6 trial drop source, never salt already owned by the player.
+    private void RemoveObsoleteSaltDrops()
+    {
+        if (placeType != PlaceEnum.CoralCoast && placeType != PlaceEnum.PhosphorTomb && placeType != PlaceEnum.SpaceshipOuterHull) return;
+        int removed = disposableDropList.dropList.RemoveAll(drop => drop.dropConfig.Count == 1 && drop.dropConfig[0].ContainsCard("盐"));
+        if (removed > 0) disposableDropList.maxCount = Math.Max(1, disposableDropList.maxCount - removed);
+        deepExploreDropList.populationList.RemoveAll(population => population.cardTemplate?.CardId == "盐");
+    }
+
     private void FirstInitDropList()
     {
         disposableDropList = ExcelReader.ReadDisposableDropListConfig(placeType);
         deepExploreDropList = ExcelReader.ReadDeepExploreDropListConfig(placeType);
+        if (!string.IsNullOrEmpty(PlaceData.climateMaterialId))
+        {
+            for (int i = 0; i < PlaceData.climateMaterialCaches; i++)
+                disposableDropList.dropList.Add(new Drop(10, PlaceData.climateMaterialId, PlaceData.climateMaterialPerCache));
+            disposableDropList.maxCount = disposableDropList.dropList.Count;
+            deepExploreDropList.populationList.Add(new Population
+            {
+                cardTemplate = CardFactory.CreateCard(PlaceData.climateMaterialId), dropNum = 2,
+                curSize = 12, maxSize = 12, sizeChangePerRound = 1, sizeChangeOnCaught = -6, trappable = false
+            });
+        }
     }
 
     private void FirstInitContainedCards()
@@ -278,7 +309,8 @@ public class EnvironmentBag : Bag
         else if (card.TryGetComponent<CoordinateComponent>(out var c))
         {
             c.coordinate.SetLocation(this);
-            c.coordinate.SetPosition(c.initialPosition);
+            c.coordinate.SetPosition(ClimateRules.IsHeatSource(card.CardId) && Player.Instance.Coordinate.Location == this
+                ? Player.Instance.Coordinate.Position : c.initialPosition);
         }
     }
 

@@ -13,47 +13,70 @@ MonoBehaviour:
   m_Name: BodyTemperatureConfig
   m_EditorClassIdentifier: 
   stateType: 10
-  initialValue: 100
-  maxValue: 200
+  initialValue: 36.5
+  maxValue: 42
+  minValue: 30
+  precision: 3
   basicChangeRate: 0
   higherIsBetter: 0
   lowerIsBetter: 0
   isDecreaseNatural: 0
   isIncreaseNatural: 0
-  normParam: -100
+  normParam: 0
   thresholds:
-  - minValueExclude: -1
-    maxValueInclude: 25
-    levelName: "\u6781\u5EA6\u5BD2\u51B7"
+  - includeMinimum: 1
+    excludeMaximum: 1
+    minValueExclude: 30
+    maxValueInclude: 32
+    levelName: "\u4E25\u91CD\u5931\u6E29"
     effect:
-      healthRate: -1
+      healthRate: -2
       sanityRate: 0
-      fulnessRate: -1.2
+      fulnessRate: -1.5
       thirstRate: 0
       sorbrietyRate: 0
-      bodyTemperatureRate: 2
+      bodyTemperatureRate: 0
       coPoisoningRate: 0
       oxygenMax: 0
-      painLevelConst: 50
-  - minValueExclude: 25
-    maxValueInclude: 50
-    levelName: "\u5BD2\u51B7"
+      painLevelConst: 0
+  - includeMinimum: 1
+    excludeMaximum: 1
+    minValueExclude: 32
+    maxValueInclude: 35
+    levelName: "\u5931\u6E29"
+    effect:
+      healthRate: -0.5
+      sanityRate: 0
+      fulnessRate: -1
+      thirstRate: 0
+      sorbrietyRate: 0
+      bodyTemperatureRate: 0
+      coPoisoningRate: 0
+      oxygenMax: 0
+      painLevelConst: 0
+  - includeMinimum: 1
+    excludeMaximum: 1
+    minValueExclude: 35
+    maxValueInclude: 35.5
+    levelName: "\u504F\u51B7"
     effect:
       healthRate: 0
       sanityRate: 0
       fulnessRate: -0.4
       thirstRate: 0
       sorbrietyRate: 0
-      bodyTemperatureRate: 1
+      bodyTemperatureRate: 0
       coPoisoningRate: 0
       oxygenMax: 0
       painLevelConst: 0
-  - minValueExclude: 50
-    maxValueInclude: 150
+  - includeMinimum: 1
+    excludeMaximum: 0
+    minValueExclude: 35.5
+    maxValueInclude: 37.5
     levelName: "\u4F53\u6E29\u8212\u9002"
     effect:
       healthRate: 0
-      sanityRate: 0.2
+      sanityRate: 0
       fulnessRate: 0
       thirstRate: 0
       sorbrietyRate: 0
@@ -61,31 +84,50 @@ MonoBehaviour:
       coPoisoningRate: 0
       oxygenMax: 0
       painLevelConst: 0
-  - minValueExclude: 150
-    maxValueInclude: 175
-    levelName: "\u708E\u70ED"
+  - includeMinimum: 0
+    excludeMaximum: 1
+    minValueExclude: 37.5
+    maxValueInclude: 38.5
+    levelName: "\u504F\u70ED"
     effect:
       healthRate: 0
       sanityRate: 0
       fulnessRate: 0
-      thirstRate: -0.5
+      thirstRate: -0.4
       sorbrietyRate: 0
-      bodyTemperatureRate: -1
+      bodyTemperatureRate: 0
       coPoisoningRate: 0
       oxygenMax: 0
       painLevelConst: 0
-  - minValueExclude: 175
-    maxValueInclude: 2.1474836e+9
-    levelName: "\u6781\u5EA6\u708E\u70ED"
+  - includeMinimum: 1
+    excludeMaximum: 1
+    minValueExclude: 38.5
+    maxValueInclude: 40
+    levelName: "\u8FC7\u70ED"
     effect:
-      healthRate: -1
+      healthRate: -0.5
       sanityRate: 0
       fulnessRate: 0
-      thirstRate: -1.5
+      thirstRate: -1
       sorbrietyRate: 0
-      bodyTemperatureRate: -2
+      bodyTemperatureRate: 0
       coPoisoningRate: 0
       oxygenMax: 0
-      painLevelConst: 50
-  lowDangerLevels: 0100000003000000
-  highDangerLevels: 0000000004000000
+      painLevelConst: 0
+  - includeMinimum: 1
+    excludeMaximum: 0
+    minValueExclude: 40
+    maxValueInclude: 42
+    levelName: "\u4E25\u91CD\u8FC7\u70ED"
+    effect:
+      healthRate: -2
+      sanityRate: 0
+      fulnessRate: 0
+      thirstRate: -2
+      sorbrietyRate: 0
+      bodyTemperatureRate: 0
+      coPoisoningRate: 0
+      oxygenMax: 0
+      painLevelConst: 0
+  lowDangerLevels: 01000000020000000400000005000000
+  highDangerLevels: 0000000006000000

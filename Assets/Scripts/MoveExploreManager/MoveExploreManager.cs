@@ -105,7 +105,9 @@ public class MoveExploreManager : IManager
             playerStateChanges = ExploreInWaterExtraEffects.GetFinalPlayerStateChanges(playerStateChanges);
         }
 
-        return (desc, time, playerStateChanges);
+        float temperatureMultiplier = ClimateRules.ActionTimeMultiplier(StateManager.Instance.PlayerStateDict[PlayerStateEnum.BodyTemperature].CurValue);
+        if (temperatureMultiplier > 1) desc += $"\n体温异常：耗时+{(temperatureMultiplier - 1) * 100:0}%";
+        return (desc, Mathf.CeilToInt(time * temperatureMultiplier), playerStateChanges);
     }
 
     /// <summary>
@@ -131,7 +133,9 @@ public class MoveExploreManager : IManager
             playerStateChanges = MoveToWaterExtraEffects.GetFinalPlayerStateChanges(playerStateChanges);
         }
 
-        return (desc, time, playerStateChanges);
+        float temperatureMultiplier = ClimateRules.ActionTimeMultiplier(StateManager.Instance.PlayerStateDict[PlayerStateEnum.BodyTemperature].CurValue);
+        if (temperatureMultiplier > 1) desc += $"\n体温异常：耗时+{(temperatureMultiplier - 1) * 100:0}%";
+        return (desc, Mathf.CeilToInt(time * temperatureMultiplier), playerStateChanges);
     }
 
     /// <summary>
@@ -145,7 +149,14 @@ public class MoveExploreManager : IManager
         var dist = Mathf.Abs(Player.Instance.Coordinate.Position - targetPosition);
 
         var basicMoveTime = Mathf.CeilToInt(dist / Player.Instance.MoveSpeed);
-        return GetMoveEffects(basicMoveTime, GameManager.Instance.CurEnvironmentBag.PlaceData.placeType);
+        var env = GameManager.Instance.CurEnvironmentBag;
+        var result = GetMoveEffects(basicMoveTime, env.PlaceData.placeType);
+        if (env.PlaceData.isInWater && ClimateManager.Instance.Modifications(env)?.towRope.Installed != null)
+        {
+            result.desc += $"\n牵引绳：移动速度+50%，耐久-{Mathf.CeilToInt(result.time / 5f)}";
+            result.time = Mathf.CeilToInt(result.time / 1.5f);
+        }
+        return result;
     }
 
     /// <summary>
@@ -280,6 +291,14 @@ public class MoveExploreManager : IManager
             GetMoveEffects(targetPosition);
 
         var dist = targetPosition - Player.Instance.Coordinate.Position; // 移动距离
+        if (time <= 0 || Mathf.Abs(dist) < 1e-5f) return;
+        var env = GameManager.Instance.CurEnvironmentBag;
+        var rope = env.PlaceData.isInWater ? ClimateManager.Instance.Modifications(env)?.towRope.Installed : null;
+        if (rope != null && rope.TryGetComponent<DurabilityComponent>(out var durability))
+        {
+            int beforeRope = GetMoveEffects(Mathf.CeilToInt(Mathf.Abs(dist) / Player.Instance.MoveSpeed), env.PlaceData.placeType).time;
+            durability.Use(Mathf.CeilToInt(beforeRope / 5f));
+        }
         var distPerMin = dist / time;
 
         void ExecuteMove()

@@ -34,6 +34,11 @@ public class StudyWindow : WindowBase
     [SerializeField] private Text leftTimeText;
     [SerializeField] private UITechNode[] studyQueueNodePlaceHolders;
 
+    private Color defaultTechNameColor;
+    private Color defaultTechDescriptionColor;
+    private Color defaultStudyInfoColor;
+    private Color defaultStudyTimeColor;
+
     private int studyState;
     [SerializeField] private HoverableButton studyStateButton; // 显示研究状态的按钮
     [SerializeField] private Animator studyStateButtonAnimator;
@@ -49,6 +54,10 @@ public class StudyWindow : WindowBase
         base.Awake();
 
         lockedColor = intermediateTechLocks[0].GetComponentInChildren<Image>().color;
+        defaultTechNameColor = techName.color;
+        defaultTechDescriptionColor = techDescription.color;
+        defaultStudyInfoColor = studyInfo.color;
+        defaultStudyTimeColor = studyTime.color;
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(menuLayout as RectTransform);
 
@@ -334,6 +343,7 @@ public class StudyWindow : WindowBase
 
         // 研究状态
         var techNodeState = TechnologyManager.Instance.GetTechNodeState(techNode, out string lockedReason, out int order);
+        ApplyLockedDetailsVisual(techNodeState == TechNodeState.Locked);
 
         // 显示研究按钮
         studyButton.Display(techNode, techNodeState);
@@ -342,6 +352,7 @@ public class StudyWindow : WindowBase
         progressSlider.gameObject.SetActive(true);
         var progress = TechnologyManager.Instance.GetStudyProgress(techNode);
         progressSlider.SetValue(progress, techNode.cost, playAnim);
+        progressSlider.SetLockedVisual(techNodeState == TechNodeState.Locked);
 
         // 显示剩余研究时间
         studyTime.transform.parent.gameObject.SetActive(true);
@@ -368,6 +379,30 @@ public class StudyWindow : WindowBase
             case TechNodeState.ToStudy:
                 studyInfo.gameObject.SetActive(false);
                 break;
+        }
+    }
+
+    private void ApplyLockedDetailsVisual(bool locked)
+    {
+        var color = locked ? ColorManager.DarkGrey : ColorManager.White;
+        techName.color = locked ? ColorManager.DarkGrey : defaultTechNameColor;
+        techDescription.color = locked ? ColorManager.DarkGrey : defaultTechDescriptionColor;
+        studyInfo.color = locked ? ColorManager.DarkGrey : defaultStudyInfoColor;
+        studyTime.color = locked ? ColorManager.DarkGrey : defaultStudyTimeColor;
+
+        foreach (var obj in temp)
+        {
+            var button = obj.GetComponent<HoverableButton>();
+            if (button != null)
+            {
+                button.currentColor = button.hoveredColor = color;
+                if (button.image != null) button.image.color = color;
+                if (button.text != null) button.text.color = color;
+            }
+
+            var toggle = obj.GetComponentInChildren<UIStateToggle>();
+            if (locked && toggle != null)
+                toggle.SetLockedVisual();
         }
     }
 

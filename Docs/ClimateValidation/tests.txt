@@ -1,0 +1,150 @@
+PASS new world Celsius body (36.5)
+PASS L2 heat exchange (-1.04)
+PASS heat divided by area (1.2)
+PASS environment step capped (-4)
+PASS diurnal interpolation (-4)
+PASS glacier severe weather (-26)
+PASS glacier recovery end (0)
+PASS cold water and resting cap (-1.35)
+PASS comfort recovery (0.15)
+PASS heat water cap (0.81)
+PASS zero Celsius neutral ice (0)
+PASS positive Celsius minimum melting (-1)
+PASS negative Celsius freezing (10)
+PASS body threshold 31
+PASS body threshold 32
+PASS body threshold 35
+PASS body threshold 35.5
+PASS body threshold 37.5
+PASS body threshold 37.501
+PASS body threshold 38.5
+PASS body threshold 40
+PASS eight undirected links, six water links
+PASS initial cabin cable PowerCabin
+PASS initial cabin insulation PowerCabin
+PASS initial cabin cable Cockpit
+PASS initial cabin insulation Cockpit
+PASS initial cabin cable LifeSupportCabin
+PASS initial cabin insulation LifeSupportCabin
+PASS table type and placeholder 融冰浮标
+PASS table type and placeholder 牵引绳
+PASS table type and placeholder 防水电缆
+PASS table type and placeholder 隔热棉
+PASS table type and placeholder 保温服
+PASS table type and placeholder 暖暖贴
+PASS table type and placeholder 盐
+PASS table type and placeholder 暖绒
+PASS cotton adds one insulation
+PASS cotton cannot stack
+PASS dry indoor eligible rows only, first-open visible
+PASS cotton removal returns original card
+PASS suit routes direct body cold (36.35)
+PASS suit consumes 10 durability per blocked degree (1431.5)
+PASS suit insufficient durability overflow (-0.9)
+PASS suit depleted destroyed
+PASS warming patch caps at 37.5 (37.5)
+PASS warming patch consumed
+PASS recipe produces three patches once
+PASS recipe technology 牵引绳
+PASS recipe technology 防水电缆
+PASS recipe technology 融冰浮标
+PASS recipe technology 保温服
+PASS recipe technology 隔热棉
+PASS recipe technology 暖暖贴
+PASS reverse lookup identical connection
+PASS both passage cards share original buoy
+PASS shared slot rejects second buoy
+PASS deployed idle buoy wears once (863.8)
+PASS buoy removes 15 ice (135)
+PASS melting buoy wears once not per direction (862.8)
+PASS frozen passage blocks entry
+PASS below 100 reopens entry
+PASS salt adds 150 buoy durability (850)
+PASS refill consumes one with no time
+PASS refill clamped (864)
+PASS full refill disabled
+PASS excluded tools do not deice
+PASS steel hammer deices
+PASS passage shows shared buoy row only
+PASS modification controls fit row width 320
+PASS modification text reserves action area 320
+PASS all four deicing actions fit viewport at row width 320
+PASS modification controls fit row width 375
+PASS modification text reserves action area 375
+PASS all four deicing actions fit viewport at row width 375
+PASS modification controls fit row width 430
+PASS modification text reserves action area 430
+PASS all four deicing actions fit viewport at row width 430
+PASS strong deicing wears one durability (29)
+PASS strong deicing subtracts fifty after time
+PASS water rope installs
+PASS rope local move speed bonus
+PASS rope has no idle wear (288)
+PASS water outdoor eligible rows only
+PASS rope modification has no salt refill button
+PASS actual modification slot accepts dragged original cable
+PASS rope slot rejects salt without consuming material
+PASS rope card has no salt quick action or refill event
+PASS salt does not restore rope durability (200)
+PASS rope charges pre-speed time wear once per trip (196)
+PASS rope movement reaches exact target (20)
+PASS save preserves buoy UUID and shared ice
+PASS save preserves place attachment UUID
+PASS missing schema rejects old manifest
+PASS old payload rejected before gameplay deserialization
+PASS incompatible worldline remains listed
+PASS old worldline UI blocks loading not deletion
+PASS explicit incompatible worldline deletion works
+PASS depleted buoy clears shared slot
+PASS intact cable allows electrical device
+PASS broken cable disconnects actual device
+PASS broken cable prevents reconnect
+PASS crop comfort inclusive and 1.2 multiplier (0.6)
+PASS crop growth inclusive Celsius bound (1.1)
+PASS survival band no growth (1.1)
+PASS mature crop dies at survival pressure eight
+PASS heat source deployed at player position (5)
+PASS active campfire heats environment (18)
+PASS nearby campfire warms player (12)
+PASS local heat falls linearly with distance (6)
+PASS real manager settles environment heat (19.159)
+PASS extinguished source supplies no heat (0)
+PASS no direct exploration salt source 珊瑚礁海域
+PASS no direct exploration salt source 织光藻墓园
+PASS no direct exploration salt source 飞船外壳
+PASS table defines fifteen minute saline to salt cooking
+PASS self heating bag cannot replace campfire salt production
+PASS campfire accepts dragged saline water
+PASS saline water goes into campfire content slot
+PASS unlit campfire does not evaporate saline
+PASS campfire displays salt making timer
+PASS burning campfire converts one saline water to exactly one salt
+PASS salt remains in campfire without burning into another card
+PASS actual current worldline saves
+PASS load removes obsolete trial salt drop sources
+PASS load preserves already owned salt cards
+PASS previously owned saline gains cooking recipe after load
+PASS previously owned salt gains terminal cooking state after load
+PASS load updates prior unstarted trial season schedule to day11
+PASS scene reload restores one owned original buoy
+PASS scene reload preserves ice (123)
+PASS scene reload preserves buoy durability (456)
+PASS scene reload does not reroll initial cable (222)
+PASS scene reload preserves Celsius temperature (22.199)
+PASS new world unaffected by incompatible worlds (36.5)
+PASS new world has no previous attachments or ice
+PASS day10 is before first ice season
+PASS first ice season begins on day11
+PASS calendar UI uses ice season name
+PASS actual calendar reaches extreme phase on day17
+PASS same-day weather does not reroll (-18)
+PASS daily weather survives serialization (0)
+PASS day34 is final ice season day
+PASS actual calendar ends ice season after day34
+PASS visible environment button label ExploreButton: rect=(64.00, 40.00), textWidth=56, vertices=8
+PASS visible environment button label ModificationsButton: rect=(64.00, 40.00), textWidth=56, vertices=8
+PASS deep exploration and completed labels fit: 深探
+PASS deep exploration and completed labels fit: 完成
+PASS actual state and environment UI render Celsius: RoomTemperature=18.0℃ / BodyTemperature=36.5℃
+PASS actual environment button opens modification page
+PASS no Unity Error Exception Assert during gameplay

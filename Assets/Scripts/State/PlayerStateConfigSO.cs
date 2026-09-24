@@ -15,6 +15,8 @@ public class PlayerStateConfigSO : ScriptableObject
     public float initialValue = 100;
     [Tooltip("最大值")]
     public float maxValue = 100;
+    public float minValue;
+    public int precision = 1;
     [Tooltip("基础变化率（每回合）")]
     public float basicChangeRate = 0;
 
@@ -49,7 +51,8 @@ public class PlayerStateConfigSO : ScriptableObject
 
         foreach (var config in thresholds)
         {
-            stateThresholds.Add(new StateThreshold(config.minValueExclude, config.maxValueInclude, config.levelName));
+            stateThresholds.Add(new StateThreshold(config.minValueExclude, config.maxValueInclude, config.levelName)
+            { includeMinimum = config.includeMinimum, excludeMaximum = config.excludeMaximum });
             stateEffects.Add(config.effect ?? StateEffect.NoEffect);
         }
 
@@ -65,7 +68,7 @@ public class PlayerStateConfigSO : ScriptableObject
             lowerIsBetter,
             isDecreaseNatural,
             isIncreaseNatural,
-            normParam
+            normParam, minValue, precision
         );
     }
 }
@@ -76,6 +79,8 @@ public class PlayerStateConfigSO : ScriptableObject
 [System.Serializable]
 public class StateThresholdConfig
 {
+    public bool includeMinimum;
+    public bool excludeMaximum;
     [Tooltip("最小值（不包含）")]
     public float minValueExclude = -1;
     [Tooltip("最大值（包含）")]

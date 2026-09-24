@@ -41,6 +41,7 @@ public class ScriptableRecipe : ScriptableObject
     public RecipeType craftType; // 配方类型
     public List<RecipeMaterial> materials; // 制作需要的材料
     public int craftTime; // 制作时间
+    [Min(1)] public int outputCount = 1;
 
     public Card CardInstance => CardFactory.GetStaticCardInstance(cardId);
 

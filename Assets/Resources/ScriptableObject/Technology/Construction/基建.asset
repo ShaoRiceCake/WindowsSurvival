@@ -14,7 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   techName: "\u57FA\u5EFA"
   techDescription: 
-  recipes: []
+  recipes:
+  - {fileID: 11400000, guid: 22d473125af70884fa94b32c85e68aaa, type: 2}
+  - {fileID: 11400000, guid: 0a9b241d99b6c554982a6fb34f8b9884, type: 2}
   prerequisites:
   - {fileID: 11400000, guid: b6d68228ea4b2fe48b5ea8b3b141aad1, type: 2}
   - {fileID: 11400000, guid: 1ee602b87b40e6a4b86987821b748e82, type: 2}

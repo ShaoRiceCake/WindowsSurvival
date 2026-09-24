@@ -25,10 +25,19 @@ MonoBehaviour:
   maxCoord: 20
   connectedOutdoorPlace: 3
   sunlightInfluenceFactor: 0.2
+  insulationLevel: 2
+  seasonInfluence: 0.25
+  dayInfluence: 0.15
+  supportsTowRope: 0
+  supportsCable: 1
+  supportsInsulation: 1
+  climateMaterialId: 
+  climateMaterialCaches: 3
+  climateMaterialPerCache: 3
   initialBagStateConfig:
     containedCards:
     - "\u6E17\u6C34\u88C2\u7F1D"
     hasCable: 1
     pressureLevel: 3
     brightness: 10
-    roomTemperature: 200
+    roomTemperature: 16

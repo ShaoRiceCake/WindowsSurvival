@@ -568,6 +568,8 @@ public class CookComponent : CardComponent
 
         if (outcomeCardId == "烧焦的食物")
             ShowTip($"{BelongedCard.CardName}烧焦了");
+        else if (outcomeCardId == "盐")
+            ShowTip("盐水蒸干了，获得盐");
         else
             ShowTip($"{BelongedCard.CardName}熟了");
 
@@ -635,11 +637,10 @@ public class StateMachineComponent : CardComponent
 #region 植物生长组件
 public class PlantGrowthComponent : ContinuousValueComponent, IUpdate
 {
-    private const int INITIAL_DEATH_PROGRESS = 5; // 初始死亡进度
     private const int MAX_GROWTH = 100; // 最大生长度
 
     public float growthRate;            // 生长速率
-    public int deadProgress;            // 死亡进度
+    public int survivalPressure;        // 生存压力，0～8
     public float minConfortTempreture;  // 最低舒适温度
     public float maxConfortTempreture;  // 最高舒适温度
     public float minGrowTempture;       // 最低生长温度
@@ -665,7 +666,9 @@ public class PlantGrowthComponent : ContinuousValueComponent, IUpdate
         this.maxLiveTempture = maxLiveTempture;
         this.deadCardId = deadCardId;
         this.pressureList = pressureList;
-        deadProgress = INITIAL_DEATH_PROGRESS; // 初始死亡进度
+        if (!(minLiveTempture <= minGrowTempture && minGrowTempture <= minConfortTempreture &&
+            minConfortTempreture <= maxConfortTempreture && maxConfortTempreture <= maxGrowTempture && maxGrowTempture <= maxLiveTempture))
+            throw new System.ArgumentException("作物温区必须满足：存活下限≤生长下限≤舒适下限≤舒适上限≤生长上限≤存活上限");
     }
 
     public override void AddValue(float delta)
@@ -685,13 +688,14 @@ public class PlantGrowthComponent : ContinuousValueComponent, IUpdate
     public void OnUpdateBegin()
     {
         var env = BelongedCard.Bag as EnvironmentBag;
+        if (env == null) return;
         pressureLevelSnapshot = env.PressureLevel;
         envTemptureSnapshot = GetEnvTempreture(env);
     }
 
     public void Update()
     {
-        if (deadProgress <= 0) return; // 已死亡
+        if (BelongedCard.Bag is not EnvironmentBag || BelongedCard.Destroyed) return;
 
         HandleGrowth();
 
@@ -700,34 +704,16 @@ public class PlantGrowthComponent : ContinuousValueComponent, IUpdate
 
     private void HandleGrowth()
     {
-        if (!pressureList.Contains(pressureLevelSnapshot))
-        {
-            // 压强不合适不生长，并且死亡进度增加
-            deadProgress--;
-            return;
-        }
-
-        // 获取当前地点的温度
-        if (envTemptureSnapshot <= maxConfortTempreture && envTemptureSnapshot > minConfortTempreture)
-        {
-            deadProgress = INITIAL_DEATH_PROGRESS; // 恢复死亡进度
-            Grow(growthRate * 1.2f); // 舒适区生长加快
-        }
-        else if (envTemptureSnapshot <= maxGrowTempture && envTemptureSnapshot > minGrowTempture)
-        {
-            deadProgress = INITIAL_DEATH_PROGRESS; // 恢复死亡进度
-            Grow(growthRate * 1f);
-        }
-        else if (envTemptureSnapshot <= maxLiveTempture && envTemptureSnapshot > minLiveTempture)
-        {
-            // 不生长
-            deadProgress = INITIAL_DEATH_PROGRESS; // 恢复死亡进度
-        }
-        else
-        {
-            // 死亡进度增加
-            deadProgress--;
-        }
+        float t = envTemptureSnapshot;
+        bool comfortable = t >= minConfortTempreture && t <= maxConfortTempreture;
+        bool growing = t >= minGrowTempture && t <= maxGrowTempture;
+        bool alive = t >= minLiveTempture && t <= maxLiveTempture;
+        int pressure = growing ? -2 : alive ? -1 : Mathf.Max(minLiveTempture - t, t - maxLiveTempture) <= 5 ? 1 : 2;
+        bool suitablePressure = pressureList.Contains(pressureLevelSnapshot);
+        if (!suitablePressure) pressure = Mathf.Max(1, pressure);
+        survivalPressure = Mathf.Clamp(survivalPressure + pressure, 0, 8);
+        if (growing && suitablePressure) Grow(growthRate * (comfortable ? 1.2f : 1));
+        RefreshSlot();
     }
 
     private float GetEnvTempreture(EnvironmentBag env)
@@ -746,7 +732,7 @@ public class PlantGrowthComponent : ContinuousValueComponent, IUpdate
 
     private void HandleDeath()
     {
-        if (deadProgress <= 0)
+        if (survivalPressure >= 8)
         {
             // 输出死亡调试信息
             var env = BelongedCard.Bag as EnvironmentBag;
@@ -760,14 +746,14 @@ public class PlantGrowthComponent : ContinuousValueComponent, IUpdate
                     float temp = GetEnvTempreture(env);
                     if (temp > maxLiveTempture)
                         reason = $"温度过高（当前温度：{temp:F1}°C，最高存活温度：{maxLiveTempture:F1}°C）";
-                    else if (temp <= minLiveTempture)
+                    else if (temp < minLiveTempture)
                         reason = $"温度过低（当前温度：{temp:F1}°C，最低存活温度：{minLiveTempture:F1}°C）";
                 }
             }
             UnityEngine.Debug.Log($"[作物死亡] {BelongedCard.CardName} 死亡了。死亡原因：{reason}");
 
             ShowTip($"{BelongedCard.CardName}死亡了");
-            deadProgress = 0;
+            survivalPressure = 8;
             BelongedCard.DestroyThis();
             // 掉落死亡掉落物
             BelongedCard.AddCard(deadCardId, BelongedCard.Bag);
@@ -1239,7 +1225,7 @@ public class PowerConsumptionComponent : CardComponent
 
     public void ConnectPower(CardEvent e = null)
     {
-        if (Connected) return;
+        if (!CanConnectPower(out _)) return;
 
         ElectricPowerManager.Instance.ConnectPower(BelongedCard.Uuid, consumptionRate);
     }
@@ -1259,6 +1245,11 @@ public class PowerConsumptionComponent : CardComponent
     public bool CanConnectPower(out string reason)
     {
         reason = string.Empty;
+        if (BelongedCard.Bag is not EnvironmentBag { HasCable: true })
+        {
+            reason = "该地点尚未铺设可用的防水电缆";
+            return false;
+        }
         return !Connected && ElectricPowerManager.Instance.CanConnectPower(consumptionRate, out reason);
     }
 

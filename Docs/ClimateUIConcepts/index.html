@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark"><link rel="icon" href="data:,">
+  <title>冰层季 · 改装与美术方案</title><link rel="stylesheet" href="concepts.css?v=2">
+</head>
+<body>
+<header class="workbench">
+  <div class="heading"><div><p class="eyebrow">WINDOWS SURVIVAL / ART DIRECTION STUDY 01</p><h1>冰层之下，仍然看得清。</h1></div><span class="draft-label">方案预览 · 尚未接入游戏</span></div>
+  <p class="intro">原游戏 1920 × 1080 画面、原像素字体与卡图。比较三版改装窗口与冰封外观，再查看冰层季的动态整体表现。</p>
+  <nav class="design-nav" aria-label="方案选择">
+    <button data-design="A" aria-pressed="true"><b>A</b><span>紧凑维护单<small>熟悉、直接、信息集中</small></span></button>
+    <button data-design="B" aria-pressed="false"><b>B</b><span>模块装配板<small>槽位清楚，强调拖入安装</small></span></button>
+    <button data-design="C" aria-pressed="false"><b>C</b><span>设备检修台<small>逐项选择，操作区更从容</small></span></button>
+    <button data-design="S" aria-pressed="false"><b>＋</b><span>冰层季整体美术<small>实时霜冻 shader · 边缘 · 粒子</small></span></button>
+  </nav>
+  <div class="toolbar">
+    <div class="scene-controls"><span>场景</span><button data-scene="cabin" aria-pressed="true">舱室</button><button data-scene="water" aria-pressed="false">水域</button><button data-scene="passage" aria-pressed="false">双向通道</button></div>
+    <div class="ice-controls"><label for="ice">通道冰封 <output id="ice-value">150 / 200</output></label><input id="ice" type="range" min="0" max="200" value="150" step="1"></div>
+    <div class="view-controls"><button id="reset">重置演示</button><button id="zoom" aria-pressed="false">原尺寸查看</button><button id="pause" aria-pressed="false">暂停动效</button></div>
+  </div>
+  <div id="season-controls" class="season-controls" hidden>
+    <div class="phase-buttons"><span>阶段</span><button data-phase="normal" aria-pressed="false">常温</button><button data-phase="onset" aria-pressed="false">初临 · 第11天</button><button data-phase="severe" aria-pressed="true">极寒 · 第17天</button><button data-phase="thaw" aria-pressed="false">回暖 · 第29天</button></div>
+    <div class="layers"><label><input id="shader-toggle" type="checkbox" checked>霜冻 shader</label><label><input id="edge-toggle" type="checkbox" checked>边缘渐变</label><label><input id="particle-toggle" type="checkbox" checked>环境粒子</label><label><input id="window-toggle" type="checkbox">打开改装窗口</label></div>
+    <label class="strength-control" for="strength">效果强度 <input id="strength" type="range" min="0" max="100" value="70"><output id="strength-value">70%</output></label>
+  </div>
+</header>
+<main>
+  <div class="preview-caption"><span id="view-caption">A / 紧凑维护单 · 舱室</span><span id="scale-note">1920 × 1080 · 适应窗口</span></div>
+  <div id="viewport" class="viewport"><div id="game" class="game" data-design="A">
+    <img class="game-base" src="assets/game-base.png" alt="当前游戏的地点与状态窗口，作为方案的实机背景参考">
+    <div class="dock-surface" aria-hidden="true"><div class="dock-shortcuts"></div><div class="dock-clock"></div></div>
+    <div id="location-replacement" class="location-replacement"></div>
+    <div id="world-cards" class="world-cards"></div>
+    <div id="climate-readout" class="climate-readout"></div>
+    <div id="season-badge" class="season-badge"></div><div id="date-badge" class="date-badge"></div>
+    <canvas id="frost-shader" class="effect-layer shader-layer" width="960" height="540" aria-label="实时像素霜冻 shader 演示"></canvas>
+    <canvas id="weather" class="effect-layer particle-layer" width="960" height="540" aria-label="冰晶、微粒和融水动态效果"></canvas>
+    <div id="season-edge" class="season-edge"></div>
+    <div id="mod-window" class="mod-window"></div>
+    <div id="demo-toast" class="demo-toast" role="status" aria-live="polite"></div>
+    <div id="season-caption" class="season-caption" hidden><span>冰层季 · 极寒期</span><small>屏幕中央与操作文字保持清晰</small></div>
+  </div></div>
+  <section class="design-notes" aria-label="当前方案说明"><div><p class="eyebrow" id="note-tag">A / 紧凑维护单</p><h2 id="note-title"></h2><p id="note-description"></p></div><dl id="note-specs"></dl></section>
+  <section class="ice-comparison" aria-label="冰封效果阶段对照"><div class="section-label"><h2>同一张通道卡，四种状态</h2><p>冰从边缘长入；100 起封锁。卡名、冰封值与按钮始终清楚。</p></div><div id="ice-states" class="ice-states"></div></section>
+  <section class="decision-guide"><h2>如何组合</h2><p>窗口布局与冰封风格可以分开选择。例如「B 的槽位面板＋C 的厚冰外观＋整体美术」。所有操作只作用于演示状态。</p><a href="ART_DIRECTION.md">查看完整方案、shader 参数与落地范围 →</a></section>
+</main>
+<script src="effects.js?v=2"></script><script src="concepts.js?v=2"></script>
+</body></html>

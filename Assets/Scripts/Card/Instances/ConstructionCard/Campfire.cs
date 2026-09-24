@@ -8,7 +8,7 @@ public class Campfire : ConstructionCard
 
 	protected override void RegisterCardEvents()
 	{
-		AddCardEvent("点燃", $"点燃{CardName}\n点燃后可以对部分食物进行简单的烧烤\n{ColorManager.Warning("会导致室内氧气加速消耗与一氧化碳增加")}",
+		AddCardEvent("点燃", $"点燃{CardName}\n点燃后可以烧烤部分食物，或将1盐水加热15分钟得到1盐\n{ColorManager.Warning("会导致室内氧气加速消耗与一氧化碳增加")}",
 			fuelStorage.Ignite, fuelStorage.CanIgnite, sound: "点火_02");
 		AddCardEvent("熄灭", "", fuelStorage.Extinguish, fuelStorage.CanExtinguish, sound: "熄灭");
 		base.RegisterCardEvents(); // 拆毁
@@ -38,7 +38,7 @@ public class Campfire : ConstructionCard
 				if (cook.outcomeCardId == "烧焦的食物")
 					timer.tipText = "烧焦";
 				else
-					timer.tipText = "烤熟";
+					timer.tipText = cook.outcomeCardId == "盐" ? "制盐" : "烤熟";
 
 				c.AddComponent(timer);
 			}
@@ -74,7 +74,7 @@ public class Campfire : ConstructionCard
 			if (cook.outcomeCardId == "烧焦的食物")
 				timer.tipText = "烧焦";
 			else
-				timer.tipText = "烤熟";
+				timer.tipText = cook.outcomeCardId == "盐" ? "制盐" : "烤熟";
 			c.AddComponent(timer);
 			c.RefreshSlot();
 		});

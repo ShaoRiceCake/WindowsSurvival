@@ -22,6 +22,7 @@ public class Main : MonoBehaviour
         Player.Instance,
         StateManager.Instance,
         GameManager.Instance,
+        ClimateManager.Instance,
         CountManager.Instance,
         MoveExploreManager.Instance,
         TechnologyManager.Instance,

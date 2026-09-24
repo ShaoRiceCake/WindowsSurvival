@@ -16,7 +16,9 @@ MonoBehaviour:
   techDescription: "\u4E00\u79CD\u9002\u5408\u6C34\u4E0B\u4F7F\u7528\u7684\u5BB9\u5668\u888B\u3002"
   recipes:
   - {fileID: 11400000, guid: c00d61a00ec63e04f8612bb9d5b1f67a, type: 2}
+  - {fileID: 11400000, guid: c57160044b51c8b499565f1080116113, type: 2}
   prerequisites:
   - {fileID: 11400000, guid: 377151f5a2342e7479207cb5a98ebce3, type: 2}
   cost: 96
   techType: 3
+  techLevel: 0

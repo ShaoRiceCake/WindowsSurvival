@@ -17,6 +17,7 @@ public class SelfHeatingCookingBag : Card
     public bool CanCook(Card card, out string tip)
     {
         tip = string.Empty;
+        if (card.CardId == "盐水") { tip = "需要在野炊营火中加热制盐"; return false; }
         if (card.TryGetComponent<CookComponent>(out var cook) && cook.leftCookTime > 0)
         {
             tip = "煮熟食物";
@@ -27,6 +28,7 @@ public class SelfHeatingCookingBag : Card
 
     public void Cook(Card food)
     {
+        if (!CanCook(food, out _)) return;
         PlaySound("点火_02", true);
         Use();
         food.LockThis();

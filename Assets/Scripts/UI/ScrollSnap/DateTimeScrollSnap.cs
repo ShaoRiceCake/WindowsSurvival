@@ -41,6 +41,9 @@ public class DateTimeScrollSnap : MonoBehaviour
 
     private void Start()
     {
+        var season = transform.root.GetComponentsInChildren<Text>(true);
+        foreach (var label in season)
+            if (label.name == "SeasonText" && label.GetComponent<ClimateSeasonLabel>() == null) label.gameObject.AddComponent<ClimateSeasonLabel>();
         Init();
         dateScrollSnap.OnPanelCentered.AddListener((_, _) =>
         {

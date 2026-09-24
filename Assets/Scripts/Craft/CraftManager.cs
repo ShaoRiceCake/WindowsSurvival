@@ -111,7 +111,7 @@ public class CraftManager : IManager
         if (WindowsManager.Instance.TryGetOpenedWindow("Details", out var window))
         {
             var detailsWindow = window as DetailsWindow;
-            if (detailsWindow.Bag != null && (detailsWindow.Bag as InnerBag).IsCraftMaterialSource)
+            if (detailsWindow.Bag is InnerBag { IsCraftMaterialSource: true })
             {
                 sourceBags.Insert(1, detailsWindow.Bag); // 插入到玩家背包前面，优先使用该背包的材料
             }
@@ -207,7 +207,7 @@ public class CraftManager : IManager
     /// 合成卡牌 (调用前请务必先判断能否合成)
     /// </summary>
     /// <param name="recipe"></param>
-    public void Craft(ScriptableRecipe recipe, UnityAction<Card> dropCraftedCard, UnityAction<List<Card>> returnMaterials)
+    public void Craft(ScriptableRecipe recipe, UnityAction<List<Card>> dropCraftedCard, UnityAction<List<Card>> returnMaterials)
     {
         craftStopped = false;
 
@@ -248,11 +248,10 @@ public class CraftManager : IManager
 
             // 制作成功
             // 创建一个新的卡牌
-            var craftedCard = CardFactory.CreateCard(recipe.cardId);
-            dropCraftedCard?.Invoke(craftedCard);
+            dropCraftedCard?.Invoke(CardFactory.CreateCards(recipe.cardId, Mathf.Max(1, recipe.outputCount)));
 
             // 触发制作事件（使用CardId而不是CardName，因为条件检测使用的是CardId）
-            EventManager.Instance.TriggerEvent(EventType.DialogueCondition, new SubscribeActionArgs("Craft", craftedCard.CardId));
+            EventManager.Instance.TriggerEvent(EventType.DialogueCondition, new SubscribeActionArgs("Craft", recipe.cardId));
         });
     }
 

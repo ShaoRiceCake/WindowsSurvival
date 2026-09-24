@@ -12,7 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bfb33a3becfee048b3ebef908168600, type: 3}
   m_Name: "\u533B\u836F"
   m_EditorClassIdentifier: 
-  libraryName: "\u533B\u5B66"
+  libraryName: "\u533B\u836F"
   craftType: 2
   recipes:
   - {fileID: 11400000, guid: 593bd4fd02ee56443ad952afe2ab2ca0, type: 2}
+  - {fileID: 11400000, guid: a4f76523078dbd14eb54697ea8819eba, type: 2}

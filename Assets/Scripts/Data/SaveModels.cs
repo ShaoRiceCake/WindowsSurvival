@@ -9,6 +9,9 @@ public enum SaveKind { Auto = 0, Manual = 1, Exit = 2 }
 public class RunData
 {
     public int version = 1;
+    [Newtonsoft.Json.JsonProperty(DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Populate)]
+    public int worldSchemaVersion = SaveDataContract.WorldSchemaVersion;
+    [Newtonsoft.Json.JsonIgnore] public bool IsCompatible => worldSchemaVersion == SaveDataContract.WorldSchemaVersion;
     public string id = Guid.NewGuid().ToString("N");
     public string name;
     public bool hardcore;
@@ -46,6 +49,8 @@ public class SavePoint
 public class SavePayload
 {
     public int version = 1;
+    [Newtonsoft.Json.JsonProperty(DefaultValueHandling = Newtonsoft.Json.DefaultValueHandling.Populate)]
+    public int worldSchemaVersion = SaveDataContract.WorldSchemaVersion;
     public Dictionary<string, string> files = new();
 }
 

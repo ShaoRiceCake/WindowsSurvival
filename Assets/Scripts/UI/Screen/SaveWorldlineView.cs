@@ -87,7 +87,7 @@ public sealed class SaveWorldlineView : MonoBehaviour
             row.text.text = run.name; row.selected = Selected?.id == run.id;
             row.useSharedSelectionFrame = true;
             row.transform.Find("Summary").GetComponent<Text>().text =
-                (run.hardcore ? "硬核" : "普通") + " · " + (point?.TimeLabel ?? "尚未开始");
+                !run.IsCompatible ? SaveDataContract.IncompatibleMessage : (run.hardcore ? "硬核" : "普通") + " · " + (point?.TimeLabel ?? "尚未开始");
             row.onClick.RemoveAllListeners(); row.onClick.AddListener(() => Select(run, true));
             if (row.selected) selectionFrame.Select(row.frame.rectTransform);
         }
@@ -111,7 +111,9 @@ public sealed class SaveWorldlineView : MonoBehaviour
         played.text = $"{(int)(run.totalPlaySeconds / 3600)}小时{(int)(run.totalPlaySeconds / 60) % 60}分";
         records.text = run.snapshots.Count + " 个";
         recent.text = run.lastPlayedUtc == DateTime.MinValue ? "尚未开始" : run.lastPlayedUtc.ToLocalTime().ToString("yyyy/MM/dd HH:mm");
-        hardRule.gameObject.SetActive(run.hardcore); load.Interactable = point != null;
+        if (!run.IsCompatible) time.text = SaveDataContract.IncompatibleMessage;
+        copy.Interactable = share.Interactable = run.IsCompatible;
+        hardRule.gameObject.SetActive(run.hardcore); load.Interactable = point != null && run.IsCompatible;
         if (fading != null) StopCoroutine(fading);
         if (animate) fading = StartCoroutine(Fade(detailFade, .16f)); else detailFade.alpha = 1;
         RenderList();

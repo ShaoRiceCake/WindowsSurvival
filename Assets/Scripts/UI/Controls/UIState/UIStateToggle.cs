@@ -31,4 +31,15 @@ public class UIStateToggle : MonoBehaviour
             }
         }
     }
+
+    public void SetLockedVisual()
+    {
+        onImage.color = offImage.color = stateNameText.color = ColorManager.DarkGrey;
+        if (button != null)
+        {
+            button.currentColor = button.hoveredColor = ColorManager.DarkGrey;
+            if (button.image != null)
+                button.image.color = ColorManager.DarkGrey;
+        }
+    }
 }

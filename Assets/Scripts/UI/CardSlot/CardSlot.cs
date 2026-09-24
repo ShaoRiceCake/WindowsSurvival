@@ -627,6 +627,7 @@ public class CardSlot : MonoBehaviour
     /// <param name="stackNum"></param>
     public void DisplayCard(Card card, int stackNum, bool displayStack = true)
     {
+        GetComponent<PassageIceOverlay>()?.Display(card);
         // 如果要显示的数量小于等于零，则什么也不显示
         if (stackNum <= 0)
         {
@@ -720,6 +721,7 @@ public class CardSlot : MonoBehaviour
     /// </summary>
     public void Clear()
     {
+        GetComponent<PassageIceOverlay>()?.Clear();
         cardAnimator.enabled = false;
         intentionAnimator.enabled = false;
 

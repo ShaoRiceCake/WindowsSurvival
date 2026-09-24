@@ -39,12 +39,9 @@ public static class SaveSystem
                 if (legacy.loads[i] == null || legacy.loads[i].gameTime == DateTime.MinValue || Repository.LegacyImported(i)) continue;
                 try
                 {
-                    string oldFolder = Path.Combine(Application.persistentDataPath, "GameData" + i);
-                    bool empty = !Directory.Exists(oldFolder) || Directory.GetFiles(oldFolder, "*.json").Length == 0;
-                    var payload = empty && legacy.loads[i].gameTime == new DateTime(2020, 1, 1) ? SaveDataContract.NewGame() : SaveDataContract.Legacy(i);
-                    var run = new RunData { name = "旧版世界线 " + (i + 1), skipGuide = legacy.loads[i].skipGuide, legacySlot = i };
-                    var point = Describe(payload, SaveKind.Manual);
-                    Repository.Commit(run, point, payload, 10);
+                    // Register metadata only. Never deserialize obsolete gameplay or silently delete it.
+                    var run = new RunData { name = "旧版世界线 " + (i + 1), skipGuide = legacy.loads[i].skipGuide, legacySlot = i, worldSchemaVersion = 0 };
+                    Repository.Update(run);
                     Repository.MarkLegacy(run, i);
                 }
                 catch (Exception e) { Notice = "部分旧档未迁移，原文件已保留：" + e.Message; Debug.LogWarning(Notice); }
@@ -73,11 +70,13 @@ public static class SaveSystem
     }
     public static void Enter(RunData run, SavePoint point = null, Action<Exception> failed = null)
     {
+        if (!run.IsCompatible) throw new InvalidDataException(SaveDataContract.IncompatibleMessage);
         point ??= run.snapshots.FirstOrDefault(p => p.id == run.latestSnapshotId) ?? throw new InvalidDataException("没有可继续的保存点");
         SaveRuntime.Instance.BeginEntry("正在载入世界线", run.name, () => PrepareEntry(run, point, Repository.Read(run, point)), failed);
     }
     private static void PrepareEntry(RunData run, SavePoint point, SavePayload payload)
     {
+        if (!run.IsCompatible) throw new InvalidDataException(SaveDataContract.IncompatibleMessage);
         // Validate and stage data before the new scene's managers initialize.
         GameDataManager.Instance.LoadSnapshot(payload);
         if (run.legacySlot >= 0) GameSettings.MigrateAudio((AudioData)JsonManager.Deserialize(payload.files["Audio"], typeof(AudioData)));

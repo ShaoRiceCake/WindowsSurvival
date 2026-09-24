@@ -16,6 +16,8 @@ MonoBehaviour:
   techDescription: "\u5305\u542B\u8FD9\u4E2A\u5B9A\u5F8B\u548C\u90A3\u4E2A\u5B9A\u5F8B\u3002\u4E8B\u5B9E\u4E0A\uFF0C\u521A\u5B66\u5B8C\u9EA6\u9EA6\u5C31\u628A\u8FD9\u4E9B\u5B9A\u5F8B\u5FD8\u5149\u4E86\u3002\n\u201C\u4F60\u5C31\u76F4\u63A5\u544A\u8BC9\u6211\u8FD9\u4E48\u505A\u80FD\u505A\u51FA\u7535\u6C60\u5C31\u884C\u4E86\u201D\n\u9EA6\u9EA6\u8BF4\u9053\u3002"
   recipes:
   - {fileID: 11400000, guid: c01c01a8f0614774587765f26d8f7ad7, type: 2}
+  - {fileID: 11400000, guid: e6f5f1409559c8d498766f58ad183944, type: 2}
   prerequisites: []
   cost: 24
   techType: 4
+  techLevel: 0

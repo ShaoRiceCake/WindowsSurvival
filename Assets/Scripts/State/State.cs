@@ -9,6 +9,8 @@ public class State
 {
     [JsonProperty] private float extraValue;                        // 额外值
     [JsonProperty] private float maxValue;                          // 最大值
+    [JsonProperty] private float minValue;
+    [JsonProperty] private int precision = 1;
     [JsonProperty] private Dictionary<string, float> constValueDict = new(); // 固定值字典
     [JsonProperty] private float variableValue;                     // 可变值
     [JsonProperty] private List<StateThreshold> thresholds = new(); // 状态阈值列表
@@ -26,9 +28,10 @@ public class State
 
     private float tempBasicChangeRate;                              // 临时基础变化率
 
-    [JsonIgnore] public string StateLevelName => thresholds[stateLevel].levelName;
+    [JsonIgnore] public string StateLevelName => stateLevel >= 0 && stateLevel < thresholds.Count ? thresholds[stateLevel].levelName : "";
     [JsonIgnore] public int StateLevel => stateLevel;
-    [JsonIgnore] public float CurValue => Mathf.Clamp(variableValue + ConstValue, 0, MaxValue);
+    [JsonIgnore] public float CurValue => Mathf.Clamp(variableValue + ConstValue, minValue, MaxValue);
+    [JsonIgnore] public float MinValue => minValue;
     [JsonIgnore] public float NormedValue => CurValue + normParam;
     [JsonIgnore] public float ExtraValue => extraValue;
     [JsonIgnore] public float MaxValue => maxValue + extraValue;
@@ -64,8 +67,8 @@ public class State
 
     private void ClampVariableValue()
     {
-        variableValue = Mathf.Clamp(variableValue, 0, MaxValue);
-        variableValue = System.MathF.Round(variableValue, 1); // 四舍五入到一位小数
+        variableValue = Mathf.Clamp(variableValue, minValue, MaxValue);
+        variableValue = System.MathF.Round(variableValue, precision);
     }
 
     public void AddValue(float delta)
@@ -122,7 +125,7 @@ public class State
     {
         for (int i = 0; i < thresholds.Count; i++)
         {
-            if (CurValue > thresholds[i].minValueExclude && CurValue <= thresholds[i].maxValueInclude)
+            if (thresholds[i].Contains(CurValue))
             {
                 // 如果状态等级发生了变化
                 if (stateLevel != i)
@@ -165,7 +168,7 @@ public class State
         List<int> lowDangerLevels, List<int> highDangerLevels,
         bool higherIsBetter = false, bool lowerIsBetter = false,
         bool isDecreaseNatural = false, bool isIncreaseNatural = false,
-        float normParam = 0)
+        float normParam = 0, float minValue = 0, int precision = 1)
     {
         extraValue = 0;
         variableValue = value;
@@ -181,13 +184,15 @@ public class State
         this.isDecreaseNatural = isDecreaseNatural;
         this.isIncreaseNatural = isIncreaseNatural;
         this.normParam = normParam;
+        this.minValue = minValue;
+        this.precision = precision;
     }
 
     public State(float value, float maxValue, float basicChangeRate = 0,
         bool higherIsBetter = false, bool lowerIsBetter = false,
         bool isDecreaseNatural = false, bool isIncreaseNatural = false,
-        float normParam = 0)
-        : this(value, maxValue, basicChangeRate, new(), new(), new(), new(), higherIsBetter, lowerIsBetter, isDecreaseNatural, isIncreaseNatural, normParam) { }
+        float normParam = 0, float minValue = 0, int precision = 1)
+        : this(value, maxValue, basicChangeRate, new(), new(), new(), new(), higherIsBetter, lowerIsBetter, isDecreaseNatural, isIncreaseNatural, normParam, minValue, precision) { }
 }
 
 // 状态阈值配置
@@ -197,6 +202,11 @@ public class StateThreshold
     public float minValueExclude;
     public float maxValueInclude;
     public string levelName;
+    public bool includeMinimum;
+    public bool excludeMaximum;
+
+    public bool Contains(float value) => (includeMinimum ? value >= minValueExclude : value > minValueExclude)
+        && (excludeMaximum ? value < maxValueInclude : value <= maxValueInclude);
 
     public StateThreshold(float minValueExclude, float maxValueInclude, string levelName)
     {

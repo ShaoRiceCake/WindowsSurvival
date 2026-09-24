@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb6e4f6e9bb12c24fbe8008f3aef6e03, type: 3}
+  m_Name: ClimateConfig
+  m_EditorClassIdentifier: 
+  firstGlacierDay: 11
+  connections:
+  - id: cockpit-power
+    a: 1
+    b: 0
+    cardA: "\u4ECE\u9A7E\u9A76\u5BA4\u5230\u52A8\u529B\u8231"
+    cardB: "\u4ECE\u52A8\u529B\u8231\u5230\u9A7E\u9A76\u5BA4"
+  - id: cockpit-life
+    a: 1
+    b: 2
+    cardA: "\u4ECE\u9A7E\u9A76\u5BA4\u5230\u7EF4\u751F\u8231"
+    cardB: "\u4ECE\u7EF4\u751F\u8231\u5230\u9A7E\u9A76\u5BA4"
+  - id: cockpit-coral
+    a: 1
+    b: 3
+    cardA: "\u4ECE\u9A7E\u9A76\u5BA4\u5230\u73CA\u745A\u7901\u6D77\u57DF"
+    cardB: "\u4ECE\u73CA\u745A\u7901\u6D77\u57DF\u5230\u9A7E\u9A76\u5BA4"
+  - id: coral-tomb
+    a: 3
+    b: 4
+    cardA: "\u4ECE\u73CA\u745A\u7901\u6D77\u57DF\u5230\u7EC7\u5149\u85FB\u5893\u56ED"
+    cardB: "\u4ECE\u7EC7\u5149\u85FB\u5893\u56ED\u5230\u73CA\u745A\u7901\u6D77\u57DF"
+  - id: coral-hull
+    a: 3
+    b: 5
+    cardA: "\u4ECE\u73CA\u745A\u7901\u6D77\u57DF\u5230\u98DE\u8239\u5916\u58F3"
+    cardB: "\u4ECE\u98DE\u8239\u5916\u58F3\u5230\u73CA\u745A\u7901\u6D77\u57DF"
+  - id: tomb-grotto
+    a: 4
+    b: 6
+    cardA: "\u4ECE\u7EC7\u5149\u85FB\u5893\u56ED\u5230\u6D45\u5C42\u5CA9\u7A74"
+    cardB: "\u4ECE\u6D45\u5C42\u5CA9\u7A74\u5230\u7EC7\u5149\u85FB\u5893\u56ED"
+  - id: grotto-hall
+    a: 6
+    b: 7
+    cardA: "\u4ECE\u6D45\u5C42\u5CA9\u7A74\u5230\u9047\u96BE\u8005\u5927\u5385"
+    cardB: "\u4ECE\u9047\u96BE\u8005\u5927\u5385\u5230\u6D45\u5C42\u5CA9\u7A74"
+  - id: hall-sanctuary
+    a: 7
+    b: 8
+    cardA: "\u4ECE\u9047\u96BE\u8005\u5927\u5385\u5230\u6700\u540E\u5E87\u62A4\u6240"
+    cardB: "\u4ECE\u6700\u540E\u5E87\u62A4\u6240\u5230\u9047\u96BE\u8005\u5927\u5385"

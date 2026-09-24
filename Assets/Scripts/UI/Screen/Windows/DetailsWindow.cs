@@ -19,6 +19,12 @@ public class DetailsWindow : BagWindow
     [SerializeField] private Transform menuLayout; // 菜单布局
     [SerializeField] private HoverableButton detailsButton; // 显示详细信息按钮
     [SerializeField] private HoverableButton innerContentsButton; // 显示内部内容按钮
+    [SerializeField] private HoverableButton modificationsButton;
+    [SerializeField] private ModificationDetailsView modificationsView;
+    [SerializeField] private GameObject placeDisplay;
+    [SerializeField] private Image placeImage;
+    [SerializeField] private Text placeTitle;
+    private EnvironmentBag displayedEnvironment;
 
     [SerializeField] private GameObject eventButtonPrefab;
 
@@ -32,6 +38,51 @@ public class DetailsWindow : BagWindow
     private Bag innerBag;
     private DisplayType displayType = DisplayType.All;
     public string CurrentDisplayPart => currentDisplayedPart;
+    private bool wasAdvancing;
+    private float fittedEventWidth = -1;
+    private void OnRectTransformDimensionsChange() => FitEventButtons();
+    private void FitEventButtons()
+    {
+        if (buttonLayout == null || eventButtonPrefab == null) return;
+        var content = (RectTransform)buttonLayout;
+        float width = ((RectTransform)buttonLayout.parent).rect.width;
+        if (width <= 0 || Mathf.Approximately(width, fittedEventWidth)) return;
+        fittedEventWidth = width;
+        var controls = buttonLayout.GetComponentsInChildren<HoverableButton>();
+        if (controls.Length == 0) return;
+        int fontSize = eventButtonPrefab.GetComponent<HoverableButton>().text.fontSize;
+        var layout = buttonLayout.GetComponent<HorizontalLayoutGroup>();
+        float gaps = layout == null ? 0 : layout.padding.horizontal + layout.spacing * (controls.Length - 1);
+        float required;
+        do
+        {
+            required = gaps;
+            foreach (var control in controls)
+            {
+                control.text.fontSize = fontSize;
+                control.minWidth = 32;
+                control.AdaptWidth();
+                required += control.rectTransform.rect.width;
+            }
+            if (required <= width || fontSize <= 16) break;
+            fontSize--;
+        } while (true);
+        // Preserve horizontal scrolling for unusually large action sets at the readable minimum.
+        content.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, Mathf.Max(width, required));
+        content.anchoredPosition = new(Mathf.Max(0, required - width) / 2, content.anchoredPosition.y);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+    }
+    private void LateUpdate()
+    {
+        bool advancing = TimeManager.Instance.IsAdvancing;
+        if (wasAdvancing != advancing)
+        {
+            wasAdvancing = advancing;
+            DisplayEventButtons();
+            if (currentDisplayedPart == "改装") modificationsView.Refresh();
+        }
+        FitEventButtons();
+    }
 
     protected override void Awake()
     {
@@ -53,14 +104,14 @@ public class DetailsWindow : BagWindow
 
     protected override void Init()
     {
-        if (currentDisplayedCard == null)
+        if (currentDisplayedCard == null && displayedEnvironment == null)
         {
             ResetDisplay();
         }
 
         detailsButton.onClick.AddListener(() =>
         {
-            if (currentDisplayedCard != null && currentDisplayedPart != "详情")
+            if ((currentDisplayedCard != null || displayedEnvironment != null) && currentDisplayedPart != "详情")
             {
                 DisplayDetails();
             }
@@ -73,6 +124,7 @@ public class DetailsWindow : BagWindow
                 DisplayInnerContents();
             }
         });
+        if (modificationsButton != null) modificationsButton.onClick.AddListener(DisplayModifications);
     }
 
     /// <summary>
@@ -123,6 +175,7 @@ public class DetailsWindow : BagWindow
         else
         {
             slot.DisplayCard(currentDisplayedCard, 1, false);
+            if (currentDisplayedPart == "详情") detailsText.text = currentDisplayedCard.CardDesc;
             DisplayEventButtons();
             //if (currentDisplay == "内容物" && innerBag != null)
             //    DisplayBag(innerBag);
@@ -166,6 +219,8 @@ public class DetailsWindow : BagWindow
 
     private void Display(DisplayType displayType = DisplayType.All)
     {
+        slot.gameObject.SetActive(true);
+        if (modificationsButton != null) modificationsButton.gameObject.SetActive(displayType == DisplayType.All && currentDisplayedCard is PassageCard { Connection: { IsWater: true } });
         this.displayType = displayType;
 
         // 显示卡牌
@@ -207,15 +262,7 @@ public class DetailsWindow : BagWindow
         if (currentDisplayedCard.HasLoopSound)
             currentDisplayedCard.OnDetailOpen();
 
-        // 调整显示区域
-        var rectTransform = buttonLayout.transform as RectTransform;
-        var widthDiff = rectTransform.sizeDelta.x - (buttonLayout.parent.transform as RectTransform).sizeDelta.x;
-        // 如果按钮显示区域长于viewport
-        if (widthDiff > 0)
-        {
-            // 则居左显示
-            rectTransform.anchoredPosition = new(rectTransform.anchoredPosition.x + widthDiff / 2, rectTransform.anchoredPosition.y);
-        }
+        FitEventButtons();
 
         EventManager.Instance.TriggerEvent(EventType.ChangeDisplayedCard);
         EventManager.Instance.TriggerEvent(EventType.DialogueCondition, new SubscribeActionArgs("Detail", currentDisplayedCard.CardName));
@@ -223,19 +270,22 @@ public class DetailsWindow : BagWindow
 
     private void DisplayDetails()
     {
+        if (modificationsView != null) modificationsView.gameObject.SetActive(false);
         currentDisplayedPart = "详情";
 
         detailsScrollView.SetActive(true);
         contentsView.gameObject.SetActive(false);
 
         // 显示卡牌详细信息
-        detailsText.text = currentDisplayedCard.CardDesc;
+        detailsText.text = currentDisplayedCard != null ? currentDisplayedCard.CardDesc : displayedEnvironment == null ? "" :
+            displayedEnvironment.PlaceData.placeDesc + "\n\n" + ClimateManager.Instance.EnvironmentDescription(displayedEnvironment);
 
         SelectWithTween(detailsButton.GetComponent<RectTransform>());
     }
 
     private void DisplayInnerContents()
     {
+        if (modificationsView != null) modificationsView.gameObject.SetActive(false);
         currentDisplayedPart = "内容物";
 
         detailsScrollView.SetActive(false);
@@ -249,6 +299,7 @@ public class DetailsWindow : BagWindow
     private void DisplayEventButtons()
     {
         if (currentDisplayedCard == null || displayType == DisplayType.OnlyDetails) return;
+        fittedEventWidth = -1;
 
         ObjectBufferPool.Instance.RestoreAllChildren(buttonLayout);
 
@@ -350,6 +401,10 @@ public class DetailsWindow : BagWindow
 
     public void ResetDisplay()
     {
+        displayedEnvironment = null;
+        if (placeDisplay != null) placeDisplay.SetActive(false);
+        if (modificationsView != null) modificationsView.gameObject.SetActive(false);
+        if (modificationsButton != null) modificationsButton.gameObject.SetActive(false);
         ClearBag();
 
         currentDisplayedPart = null;
@@ -370,6 +425,27 @@ public class DetailsWindow : BagWindow
         contentsView.gameObject.SetActive(false);
         innerContentsButton.gameObject.SetActive(false);
         ObjectBufferPool.Instance.RestoreAllChildren(buttonLayout);
+    }
+
+    public void DisplayEnvironment(EnvironmentBag environment)
+    {
+        ResetDisplay();
+        displayedEnvironment = environment;
+        slot.gameObject.SetActive(false);
+        placeDisplay.SetActive(true); placeImage.sprite = environment.PlaceData.placeImage; placeTitle.text = environment.PlaceName;
+        modificationsButton.gameObject.SetActive(true);
+        DisplayModifications();
+    }
+    public void DisplayModifications()
+    {
+        var passage = currentDisplayedCard as PassageCard;
+        var env = displayedEnvironment ?? passage?.Bag as EnvironmentBag;
+        if (env == null || modificationsView == null) return;
+        currentDisplayedPart = "改装";
+        detailsScrollView.SetActive(false); contentsView.gameObject.SetActive(false);
+        modificationsView.gameObject.SetActive(true);
+        modificationsView.Bind(env, passage);
+        SelectWithTween(modificationsButton.GetComponent<RectTransform>());
     }
 
     public void Clear()

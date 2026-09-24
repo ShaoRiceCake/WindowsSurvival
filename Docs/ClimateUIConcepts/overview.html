@@ -1,0 +1,19 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="data:,"><title>改装 UI 三版对照</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#101416;color:#dce6e8;font:17px/1.6 'Microsoft YaHei',sans-serif}main{max-width:1800px;margin:auto;padding:36px}header{display:flex;justify-content:space-between;align-items:end;margin-bottom:24px}h1{font-size:27px;font-weight:500;margin:0}p{color:#93a8b0;margin:9px 0}a{color:#b8d9e6;text-decoration:none}h2{font-size:21px;font-weight:500;margin:0 0 7px}.triptych{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}.triptych>article{min-width:0}.triptych img{display:block;width:100%;height:auto;image-rendering:pixelated}.triptych p{font-size:14px;margin-bottom:20px}.group{margin:36px 0;border-top:1px solid #3b4a4f;padding-top:25px}.group-title{font-size:24px;font-weight:400;margin:0 0 23px}.ice-row{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center;margin-bottom:18px}.ice-row>img{width:100%;height:auto}.ice-row span{color:#bdd9e2}.full{width:100%;display:block;margin-bottom:15px}.note{font-size:14px;color:#92a5ab}@media(max-width:780px){main{padding:20px}.triptych{grid-template-columns:1fr;gap:25px}.triptych img{max-width:700px}header{display:block}.ice-row{grid-template-columns:1fr}}
+</style></head><body><main>
+<header><div><h1>改装 UI · 三种布局</h1><p>同一套字体与卡图，不同的信息组织和操作方式。</p></div><a href="index.html">进入可操作预览 →</a></header>
+<section class="triptych" id="ui-triptych">
+<article><h2>A / 紧凑维护单</h2><p>两项同时读完；延续目前的操作习惯。</p><img src="previews/A-cabin-window.png" alt="A版舱室改装窗口"></article>
+<article><h2>B / 模块装配板</h2><p>强调拖入卡槽；更直观地展示设备。</p><img src="previews/B-cabin-window.png" alt="B版舱室改装窗口"></article>
+<article><h2>C / 设备检修台</h2><p>逐项展开；长说明与后续扩展更从容。</p><img src="previews/C-cabin-window.png" alt="C版舱室改装窗口"></article>
+</section>
+<section class="group"><h2 class="group-title">同一条通道 · 同一个浮标</h2><div class="triptych" id="passage-triptych">
+<article><h2>A / 信息与维护同页</h2><p>浮标与除冰操作一起展示。</p><img src="previews/A-passage-window.png" alt="A版通道改装"></article>
+<article><h2>B / 两端连接到唯一槽位</h2><p>两端只共享一张卡，不分别安装。</p><img src="previews/B-passage-window.png" alt="B版通道改装"></article>
+<article><h2>C / 状态与设备分开查看</h2><p>先选冰封状态，或切换到浮标维护。</p><img src="previews/C-passage-window.png" alt="C版通道改装"></article>
+</div></section>
+<section class="group" id="frost-comparison"><h2 class="group-title">冰封外观可以独立选择</h2><div class="ice-row"><span>A · 细霜爬边</span><img src="previews/A-ice-states.png" alt="A版冰封四阶段"></div><div class="ice-row"><span>B · 斜切冰片</span><img src="previews/B-ice-states.png" alt="B版冰封四阶段"></div><div class="ice-row"><span>C · 厚冰壳</span><img src="previews/C-ice-states.png" alt="C版冰封四阶段"></div></section>
+<section class="group"><h2 class="group-title">冰层季整体氛围 · 水域极寒</h2><img class="full" src="previews/season-severe.png" alt="完整游戏画面中的极寒期效果方案"><p>像素霜冻 shader、边缘冷色渐变、缓慢漂浮冰晶；中央文字和交互区保持清晰。动态效果请在预览页查看。</p></section>
+<p class="note">以上是原实机画面背景上的浏览器设计稿，尚未接入 Unity。数值与卡图仅供比较布局；新卡沿用废金属占位图。</p>
+</main></body></html>

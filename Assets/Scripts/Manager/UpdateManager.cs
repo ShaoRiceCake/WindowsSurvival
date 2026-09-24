@@ -57,6 +57,7 @@ public class UpdateManager : IManager
 
     private void Update()
     {
+        ClimateManager.Instance.Tick();
         EventManager.Instance.TriggerEvent(EventType.UpdateBegin);
         // 顺序很重要
         TechnologyUpdate.Invoke();

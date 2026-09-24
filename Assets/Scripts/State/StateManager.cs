@@ -125,9 +125,10 @@ public class StateManager : IManager
     /// <param name="delta"></param>
     public void ChangePlayerState(PlayerStateEnum stateEnum, float delta)
     {
+        if (!PlayerStateDict.ContainsKey(stateEnum)) return;
+        if (stateEnum == PlayerStateEnum.BodyTemperature) delta = ThermalSuit.Protect(delta);
         //记录改值前的危险等级
         var lastStateLevel = PlayerStateDict[stateEnum].StateLevelName;
-        if (!PlayerStateDict.ContainsKey(stateEnum)) return;
 
         // 氧气特殊处理
         if (stateEnum == PlayerStateEnum.Oxygen)
@@ -402,47 +403,9 @@ public class StateManager : IManager
     /// <param name="env"></param>
     private void CalcBodyTemperatureChangeRate(EnvironmentBag env)
     {
-        // 温度差 = 室温 - 体温
-        var diff = env.StateDict[EnvironmentStateEnum.RoomTemperature].NormedValue - PlayerStateDict[PlayerStateEnum.BodyTemperature].NormedValue;
-
-        float rate;
-        if (diff < -50)
-        {
-            rate = -4f;
-        }
-        else if (diff < -30)
-        {
-            rate = -3f;
-        }
-        else if (diff < -10)
-        {
-            rate = -2f;
-        }
-        else if (diff < -5)
-        {
-            rate = -1f;
-        }
-        else if (diff <= 5)
-        {
-            rate = 0f;
-        }
-        else if (diff <= 10)
-        {
-            rate = 1f;
-        }
-        else if (diff <= 30)
-        {
-            rate = 2f;
-        }
-        else if (diff <= 50)
-        {
-            rate = 3f;
-        }
-        else
-        {
-            rate = 4f;
-        }
-
+        if (env == null) return;
+        float rate = ClimateRules.BodyDelta(PlayerStateDict[PlayerStateEnum.BodyTemperature].CurValue,
+            ClimateManager.Instance.EffectiveTemperature(env), env.PlaceData.isInWater, IsResting);
         SetPlayerStateBasicChangeRate(PlayerStateEnum.BodyTemperature, rate);
     }
 

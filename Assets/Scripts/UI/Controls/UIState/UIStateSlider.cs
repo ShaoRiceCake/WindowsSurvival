@@ -102,6 +102,24 @@ public class UIStateSlider : MonoBehaviour
         UpdateSliderValue(curValue, maxValue, playAnim);
     }
 
+    public void SetLockedVisual(bool locked)
+    {
+        var color = locked ? ColorManager.DarkGrey : ColorManager.White;
+        if (icon != null) icon.color = color;
+        if (stateNameText != null) stateNameText.color = color;
+        if (valueText != null) valueText.color = color;
+        if (button != null)
+        {
+            button.currentColor = button.hoveredColor = color;
+            if (button.image != null) button.image.color = color;
+        }
+        if (slider != null)
+        {
+            if (slider.fillRect != null && slider.fillRect.TryGetComponent<Image>(out var fill)) fill.color = color;
+            if (slider.handleRect != null && slider.handleRect.TryGetComponent<Image>(out var handle)) handle.color = color;
+        }
+    }
+
     protected virtual void DisplayValueText(float curValue, float maxValue)
     {
         if (displayPercentage)
@@ -110,7 +128,7 @@ public class UIStateSlider : MonoBehaviour
             valueText.text = $"{curValue.ToString($"F{displayDigits}")}/{maxValue}";
     }
 
-    public void SetValue(State state, bool playAnim)
+    public virtual void SetValue(State state, bool playAnim)
     {
         SetValue(state.CurValue, state.MaxValue, playAnim);
 

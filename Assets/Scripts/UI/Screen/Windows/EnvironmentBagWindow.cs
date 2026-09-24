@@ -10,6 +10,7 @@ public class EnvironmentBagWindow : BagWindow
     [SerializeField] private Text placeNameText;                    // 环境名称
     [SerializeField] private Image environmentImage;                // 环境图片
     [SerializeField] private HoverableButton exploreButton;         // 探索按钮
+    [SerializeField] private HoverableButton modificationsButton;
     [SerializeField] private RectTransform stateLayout;
     [SerializeField] private RectTransform envCardTransform;
 
@@ -43,6 +44,8 @@ public class EnvironmentBagWindow : BagWindow
 
         // 探索按钮事件
         exploreButton.onClick.AddListener(Explore);
+        if (modificationsButton != null) modificationsButton.onClick.AddListener(() =>
+            (WindowsManager.Instance.OpenWindow("Details") as DetailsWindow).DisplayEnvironment(CurEnv));
 
         // 探索消耗显示
         exploreTipController = exploreButton.gameObject.AddComponent<HoverTipController>();
@@ -51,7 +54,7 @@ public class EnvironmentBagWindow : BagWindow
             if (MoveExploreManager.Instance.CanMoveExplore())
             {
                 var (desc, time, playerStateChanges) = MoveExploreManager.Instance.GetExploreEffects();
-                desc = "探索该地点" + desc;
+                desc = (CurEnv.DiscoveryDegree >= 1 ? "深入探索该地点" : "探索该地点") + desc;
                 exploreTipController.SetTip(desc, time, playerStateChanges, null);
             }
             else
@@ -235,6 +238,12 @@ public class EnvironmentBagWindow : BagWindow
         {
             case EnvironmentStateEnum.HasCable:
                 hasCabble.SetValue(args.hasCable);
+                if (continuousValueStates.TryGetValue(EnvironmentStateEnum.Electricity, out var power))
+                {
+                    power.gameObject.SetActive(args.hasCable);
+                    if (args.hasCable) power.SetValue(ElectricPowerManager.Instance.Power, false);
+                    MonoUtility.UpdateLayoutSize(stateLayout.GetComponent<VerticalLayoutGroup>());
+                }
                 break;
             case EnvironmentStateEnum.PressureLevel:
                 pressureLevel.SetValue(args.pressureLevel);
@@ -257,7 +266,7 @@ public class EnvironmentBagWindow : BagWindow
         {
             exploreButton.image.gameObject.SetActive(false);
             exploreButton.Interactable = false;
-            text.text = "探索完成";
+            text.text = "完成";
             text.color = ColorManager.Cyan;
 
             // 不再显示探索提示
@@ -268,7 +277,7 @@ public class EnvironmentBagWindow : BagWindow
             // 深入探索
             exploreButton.image.gameObject.SetActive(true);
             exploreButton.Interactable = true;
-            text.text = "深入探索";
+            text.text = "深探";
             text.color = ColorManager.White;
 
             exploreTipController.enabled = true;
@@ -277,7 +286,7 @@ public class EnvironmentBagWindow : BagWindow
         {
             exploreButton.image.gameObject.SetActive(true);
             exploreButton.Interactable = true;
-            text.text = "开始探索";
+            text.text = "探索";
             text.color = ColorManager.White;
 
             exploreTipController.enabled = true;

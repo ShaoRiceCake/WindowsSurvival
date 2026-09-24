@@ -91,12 +91,14 @@ public sealed class SaveRepository
     }
     public SavePayload Read(RunData run, SavePoint point)
     {
+        if (!run.IsCompatible) throw new InvalidDataException(SaveDataContract.IncompatibleMessage);
         if (run.dead || File.Exists(Path.Combine(Folder(run.id), "dead"))) throw new InvalidDataException("该世界线已结束");
         if (!run.snapshots.Any(s => s.id == point.id)) throw new InvalidDataException("保存点不属于此世界线");
         if (run.hardcore && point.id != run.latestSnapshotId) throw new InvalidDataException("硬核模式不能回档");
         string json = File.ReadAllText(Snapshot(run.id, point.id));
         if (Hash(json) != point.checksum) throw new InvalidDataException("保存点校验失败，请选择其他记录");
         var data = Decode<SavePayload>(json);
+        if (data.worldSchemaVersion != SaveDataContract.WorldSchemaVersion) throw new InvalidDataException(SaveDataContract.IncompatibleMessage);
         if (data.version != FormatVersion || data.files == null) throw new InvalidDataException("不支持此存档版本");
         return data;
     }
@@ -124,6 +126,7 @@ public sealed class SaveRepository
 
     public void Export(RunData run, string path)
     {
+        if (!run.IsCompatible) throw new InvalidDataException(SaveDataContract.IncompatibleMessage);
         var copy = Decode<RunData>(JsonConvert.SerializeObject(run));
         copy.fromHardcore |= copy.hardcore;
         copy.hardcore = false;
@@ -166,6 +169,7 @@ public sealed class SaveRepository
             return text.ToString();
         }
         var run = Decode<RunData>(ReadEntry("run.json"));
+        if (!run.IsCompatible) throw new InvalidDataException(SaveDataContract.IncompatibleMessage);
         if (run.version != FormatVersion || run.dead || run.snapshots == null || run.snapshots.Count == 0 || run.snapshots.Select(s => s.id).Distinct().Count() != run.snapshots.Count) throw new InvalidDataException("无效的世界线记录");
         var allowed = new HashSet<string>(run.snapshots.Select(s => Id(s.id) + ".json")) { "run.json" };
         if (zip.Entries.Any(e => !allowed.Contains(e.FullName))) throw new InvalidDataException("分享文件包含不支持的条目");
@@ -191,6 +195,7 @@ public sealed class SaveRepository
     public RunData Copy(RunData source) => Clone(source, p => Read(source, p));
     private RunData Clone(RunData source, Func<SavePoint, SavePayload> read)
     {
+        if (!source.IsCompatible) throw new InvalidDataException(SaveDataContract.IncompatibleMessage);
         var copy = Decode<RunData>(JsonConvert.SerializeObject(source));
         copy.id = Guid.NewGuid().ToString("N"); copy.name = source.name + "（副本）";
         copy.hardcore = false; copy.fromHardcore |= source.hardcore; copy.legacySlot = -1;

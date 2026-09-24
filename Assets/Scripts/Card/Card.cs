@@ -38,13 +38,13 @@ public abstract class Card : IComparable<Card>
         }
     }
 
-    [JsonIgnore] public string CardDesc => CardFactory.GetCardDesc(CardId);
+    [JsonIgnore] public virtual string CardDesc => CardFactory.GetCardDesc(CardId);
 
     [JsonIgnore] public CardType CardType => CardFactory.GetCardType(CardId);
 
     [JsonIgnore] public int MaxStackNum => CardFactory.GetMaxStackNum(CardId);
 
-    [JsonIgnore] public bool Moveable => CardFactory.GetMoveable(CardId);
+    [JsonIgnore] public virtual bool Moveable => CardFactory.GetMoveable(CardId);
 
     [JsonIgnore] public CardTextureType TextureType => CardFactory.GetCardTextureType(CardId);
 
